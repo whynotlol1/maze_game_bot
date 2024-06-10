@@ -1,17 +1,16 @@
-# algorithm made by xsafter
-
-from collections import deque
-from PIL import Image
 import random
+from collections import deque
+
+from PIL import Image
 
 
-def print_grid(grid, n: int, m: int):
+def print_grid(grid, n: int, m: int, uuid: str):
     img = Image.new('1', (n, m))
     pixels = img.load()
     for i in range(img.size[0]):
         for j in range(img.size[1]):
             pixels[i, j] = grid[i][j]
-    img.save('maze.png')
+    img.save(f'maze_game/data/saves/mazes/maze_{uuid}.png')
 
 
 def make_grid(width, height):
@@ -80,10 +79,7 @@ def flood_find_empty(grid, tries, goal):
     return new_grid, percentage
 
 
-def main():
-    width = 100
-    height = 100
-    iterations = 2
+def generate(*, width: int, height: int, iterations: int, uuid: str):
     chance = 40
     count = 5
     flood_tries = 5
@@ -98,24 +94,6 @@ def main():
 
     grid, percentage = flood_find_empty(grid, flood_tries, goal_percentage)
 
-    print("")
-    print_grid(grid, width, height)
+    print_grid(grid, width, height, uuid)
 
-
-def generate(width: int, height: int, iterations: int):
-
-    chance = 40
-    count = 5
-    flood_tries = 5
-    goal_percentage = 30  # above 30% seems to be a good target
-
-    grid = make_grid(width, height)
-
-    grid = populate_grid(grid, chance)
-
-    for i in range(iterations):
-        grid = automate_iteration(grid, count, 0)
-
-    grid, percentage = flood_find_empty(grid, flood_tries, goal_percentage)
-
-    print_grid(grid, width, height)
+    return [0, 0]
