@@ -1,0 +1,1 @@
+Created a new game for you. Make sure to remember the game <b>UUID</b>. You can always restore the saved game with it using <b>/load_by_uuid</b>.

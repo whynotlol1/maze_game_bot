@@ -1,15 +1,21 @@
-import random
 from collections import deque
-
 from PIL import Image
+import random
 
 
 def print_grid(grid, n: int, m: int, uuid: str):
-    img = Image.new('1', (n, m))
+    color_map = {
+        0: (0, 0, 0),  # Black
+        1: (255, 255, 255),  # White
+        2: (255, 255, 0),  # Yellow
+        3: (250, 50, 0)  # Red
+    }
+    img = Image.new('RGB', (n, m))
     pixels = img.load()
     for i in range(img.size[0]):
         for j in range(img.size[1]):
-            pixels[i, j] = grid[i][j]
+            rgb_color = color_map.get(grid[i][j], (0, 0, 0))
+            pixels[i, j] = rgb_color
     img.save(f'maze_game/data/saves/mazes/maze_{uuid}.png')
 
 
@@ -76,6 +82,25 @@ def flood_find_empty(grid, tries, goal):
                             unvisited.append([current[0] + k, current[1] + l_])
         percentage = open_count * 100 / (len(grid) * len(grid[0]))
 
+    exit_side = random.randint(1, 4)
+    match exit_side:
+        case 1:  # left
+            starting_coords = [0, random.randint(10, len(grid)-20)]
+            for y in range(starting_coords[1], starting_coords[1]+10):
+                grid[starting_coords[0]][y] = 0
+        case 2:  # right
+            starting_coords = [len(grid[0]), random.randint(10, len(grid)-20)]
+            for y in range(starting_coords[1], starting_coords[1]+10):
+                grid[starting_coords[0]][y] = 0
+        case 3:  # top
+            starting_coords = [random.randint(10, len(grid[0])-20), 0]
+            for x in range(starting_coords[0], starting_coords[0]+10):
+                grid[x][starting_coords[1]] = 0
+        case 4:  # bottom
+            starting_coords = [random.randint(10, len(grid[0])-20), len(grid)]
+            for x in range(starting_coords[0], starting_coords[0] + 10):
+                grid[x][starting_coords[1]] = 0
+
     return new_grid, percentage
 
 
@@ -93,7 +118,30 @@ def generate(*, width: int, height: int, iterations: int, uuid: str):
         grid = automate_iteration(grid, count, 0)
 
     grid, percentage = flood_find_empty(grid, flood_tries, goal_percentage)
+    exit_side = random.randint(1, 4)
+    match exit_side:
+        case 1:  # left
+            starting_coords = [0, random.randint(10, len(grid) - 30)]
+            for i in range(3):
+                for y in range(starting_coords[1], starting_coords[1] + 20):
+                    grid[starting_coords[0] + i][y] = 2
+        case 2:  # right
+            starting_coords = [len(grid[0]) - 1, random.randint(10, len(grid) - 30)]
+            for i in range(3):
+                for y in range(starting_coords[1], starting_coords[1] + 20):
+                    grid[starting_coords[0] - i][y] = 2
+        case 3:  # top
+            starting_coords = [random.randint(10, len(grid[0]) - 30), 0]
+            for i in range(3):
+                for x in range(starting_coords[0], starting_coords[0] + 20):
+                    grid[x][starting_coords[1] + i] = 2
+        case 4:  # bottom
+            starting_coords = [random.randint(10, len(grid[0]) - 30), len(grid) - 1]
+            for i in range(3):
+                for x in range(starting_coords[0], starting_coords[0] + 20):
+                    grid[x][starting_coords[1] - i] = 2
 
     print_grid(grid, width, height, uuid)
 
-    return [0, 0]
+    player_coords = []
+    return player_coords

@@ -58,7 +58,7 @@ def create_new_game(*, user_id: int) -> str:
     for dir_name in dirs.values():
         if not path.isdir(dir_name):
             mkdir(dir_name)
-    player_position = maze_generator.generate(width=100, height=100, iterations=2, uuid=uuid)
+    player_position = maze_generator.generate(width=300, height=300, iterations=2, uuid=uuid)
     save_json = {
         "UUID": uuid,
         "player": {

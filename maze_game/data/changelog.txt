@@ -1,0 +1,8 @@
+v0.0.1b [11.06.2024]
+- Added /start command
+- Copied maze generation algorithm from https://github.com/xsafter/map-generator
+v0.0.2b [11.06.2024]
+- Started implementing the game system: implemented maze generating step 1
+v0.0.3b [11.06.2024]
+- Finished maze generation algorithm
+- Started working on player generation in maze (choosing starting coords)
