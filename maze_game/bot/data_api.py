@@ -20,6 +20,10 @@ dirs = {
 
 
 def start_api(*, secretkey: str) -> str:
+    global dirs
+    for dir_name in dirs.values():
+        if not path.isdir(dir_name):
+            mkdir(dir_name)
     load_dotenv()
     if secretkey == getenv("secretkey"):
         cur.execute("""
@@ -55,9 +59,6 @@ def check_if_user_has_save_file(*, user_id: int) -> bool:
 def create_new_game(*, user_id: int) -> str:
     global dirs
     uuid = gen_uuid(user_id=user_id)
-    for dir_name in dirs.values():
-        if not path.isdir(dir_name):
-            mkdir(dir_name)
     player_position = maze_generator.generate(width=300, height=300, iterations=2, uuid=uuid)
     save_json = {
         "UUID": uuid,
