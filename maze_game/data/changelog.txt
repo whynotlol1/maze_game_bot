@@ -6,7 +6,7 @@ v0.0.1b - v0.0.3b
 v0.0.4b
 - Implemented interface
 v0.0.5b
-- Implemented interface functions
+- Implemented movement
 - Remade saves system: user cannot have several saves
 Release:
 

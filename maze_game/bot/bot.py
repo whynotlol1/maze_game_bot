@@ -44,13 +44,17 @@ def start_command_handler(message: telebot.types.Message):
 def callback_query_handler(call: telebot.types.CallbackQuery):
     match call.data.replace(":", ".").split(".")[1]:  # TODO
         case "move_up":
-            pass
+            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="up")
+            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
         case "move_left":
-            pass
+            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="left")
+            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
         case "move_down":
-            pass
+            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="down")
+            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
         case "move_right":
-            pass
+            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="right")
+            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
         case "spells_menu":
             pass
         case "inventory_menu":

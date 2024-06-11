@@ -58,7 +58,7 @@ def check_if_user_has_save_file(*, user_id: int) -> bool:
     return check is not None
 
 
-def create_new_game(*, user_id: int) -> str:
+def create_new_game(*, user_id: int):
     global dirs
     uuid = gen_uuid(user_id=user_id)
     player_position, maze_grid = maze_generator.generate(width=300, height=300, iterations=2, uuid=uuid)
@@ -92,31 +92,12 @@ def get_uuid(*, user_id: int) -> str:
     return cur.execute("select uuid from users where telegram_id=?", (user_id,)).fetchone()[0]
 
 
-def find_surrounding(matrix, target_value=2):
-    for i, row in enumerate(matrix):
-        try:
-            index = row.index(target_value)
-            break
-        except ValueError:
-            continue
-
-    surrounding = []
-    start_row = max(0, i - 2)
-    end_row = min(i + 3, len(matrix))
-    start_col = max(0, index - 2)
-    end_col = min(index + 3, len(matrix[0]))
-
-    for row in matrix[start_row:end_row]:
-        surrounding.append(row[start_col:end_col])
-
-    return surrounding
-
-
 def get_small_maze(uuid: str):
     global dirs
     with open(f"{dirs["save files"]}/save_{uuid}.json", "r") as save_file:
         save_data = json.loads(save_file.read())
     matrix = save_data["maze grid"]
+    i, index = 0, 0
     for i, row in enumerate(matrix):
         try:
             index = row.index(3)
@@ -134,3 +115,32 @@ def get_small_maze(uuid: str):
         surrounding.append(row[start_col:end_col])
 
     maze_generator.draw_small(grid=surrounding, n=len(surrounding), m=len(surrounding[0]), uuid=uuid)
+
+
+def player_movement(*, user_id: int, direction: str):
+    global dirs
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        grid = save_data["maze grid"]
+        coords = save_data["player"]["global maze position"]
+        match direction:
+            case "up":
+                if grid[coords[0]][coords[1]-1] == 0:
+                    grid[coords[0]][coords[1]-1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]][coords[1]-1]
+                    coords = [coords[0], coords[1]-1]
+            case "down":
+                if grid[coords[0]][coords[1]+1] == 0:
+                    grid[coords[0]][coords[1]+1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]][coords[1]+1]
+                    coords = [coords[0], coords[1]+1]
+            case "right":
+                if grid[coords[0]+1][coords[1]] == 0:
+                    grid[coords[0]+1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]+1][coords[1]]
+                    coords = [coords[0]+1, coords[1]]
+            case "left":
+                if grid[coords[0]-1][coords[1]] == 0:
+                    grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]]
+                    coords = [coords[0]-1, coords[1]]
+        save_data["maze grid"] = grid
+        save_data["player"]["global maze position"] = coords
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
+        save_file.write(json.dumps(save_data))
