@@ -1,12 +1,10 @@
 DEV updates:
-v0.0.1b [11.06.2024]
+v0.0.1b - v0.0.3b [11.06.2024]
 - Added /start command
 - Copied maze generation algorithm from https://github.com/xsafter/map-generator
-v0.0.2b [11.06.2024]
-- Started implementing the game system: implemented maze generating step 1
-v0.0.3b [11.06.2024]
-- Commited maze generation algorithm to https://github.com/whynotlol1/map-generator and https://github.com/xsafter/map-generator
-- Finished the algorithm: implemented player generation (not commited to any repo)
+- Implemented player & exit generation
+v0.0.4b
+
 Release:
 
 Post-Release updates:
