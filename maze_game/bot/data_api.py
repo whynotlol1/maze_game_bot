@@ -31,9 +31,8 @@ def start_api():
             mkdir(dir_name)
     for file_name in list(dirs.values())[-2:]:
         if not path.isfile(file_name):
-            __f = open(file_name, "w")
-            __f.write("{}")
-            __f.close()
+            with open(file_name, "w") as file:
+            file.write("{}")
     with open(dirs["items"], "w") as file:
         items = {
             0: ["Empty", ""],
