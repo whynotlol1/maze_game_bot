@@ -43,16 +43,20 @@ def start_command_handler(message: telebot.types.Message):
 @bot.callback_query_handler(lambda call: call.data.startswith("game"))
 def callback_query_handler(call: telebot.types.CallbackQuery):
     def private_send_inventory():
-        message_text = ""
+        message_text = "<i>Inventory menu.</i>\n"
         inventory = data_api.get_inventory(user_id=int(call.data.split(":")[2]))
         markup = types.InlineKeyboardMarkup()
-        for i in range(5):
-            markup.add(
-                types.InlineKeyboardButton(text=f"Slot {i + 1} {"(active)" if inventory[i][1] == "active" else ""}", callback_data=f"game:inventory.slot_choose_{i}.user:{int(call.data.split(":")[2])}"),
-            )
+        markup.row(
+            types.InlineKeyboardButton(text=f"Slot 1", callback_data=f"game:inventory.slot_choose_0.user:{int(call.data.split(":")[2])}"),
+            types.InlineKeyboardButton(text=f"Slot 2", callback_data=f"game:inventory.slot_choose_1.user:{int(call.data.split(":")[2])}"),
+            types.InlineKeyboardButton(text=f"Slot 3", callback_data=f"game:inventory.slot_choose_2.user:{int(call.data.split(":")[2])}"),
+            types.InlineKeyboardButton(text=f"Slot 4", callback_data=f"game:inventory.slot_choose_3.user:{int(call.data.split(":")[2])}"),
+            types.InlineKeyboardButton(text=f"Slot 5", callback_data=f"game:inventory.slot_choose_4.user:{int(call.data.split(":")[2])}"),
+        )
         markup.add(types.InlineKeyboardButton(text="Back to maze.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}"))
         for i in range(len(inventory)):
-            message_text += f"<i>Slot {i + 1}</i>: <b>TODO: data_api.get_item(item_id={inventory[i][0]})</b>\n"  # TODO v0.0.9b
+            message_text += f"<i>Slot {i + 1}</i>: <b>{data_api.get_item(item_id=inventory[i][0])}</b> {"| <i>(active)</i>" if inventory[i][1] == "active" else ""}\n"
+        message_text += "<i>Choose active slot with the buttons below.</i>"
         bot.delete_message(call.message.chat.id, call.message.id)
         bot.send_message(call.message.chat.id, message_text, reply_markup=markup, parse_mode="html")
 
@@ -73,8 +77,6 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="right")
             bot.delete_message(call.message.chat.id, call.message.id)
             process_game(message=call.message, user_id=int(call.data.split(":")[2]))
-        case "spells_menu":  # TODO v0.0.8b
-            pass
         case "inventory_menu":
             private_send_inventory()
         case "inventory":
@@ -110,7 +112,7 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
 def process_game(*, message: telebot.types.Message, user_id: int):
     markup = types.InlineKeyboardMarkup()
     markup.row(
-        types.InlineKeyboardButton(text="Spells", callback_data=f"game:spells_menu.user:{user_id}"),
+        types.InlineKeyboardButton(text="Settings", callback_data=f"game:settings_menu.user:{user_id}"),
         types.InlineKeyboardButton(text="Go up", callback_data=f"game:move_up.user:{user_id}"),
         types.InlineKeyboardButton(text="Inventory", callback_data=f"game:inventory_menu.user:{user_id}"),
     )
@@ -118,9 +120,6 @@ def process_game(*, message: telebot.types.Message, user_id: int):
         types.InlineKeyboardButton(text="Go left", callback_data=f"game:move_left.user:{user_id}"),
         types.InlineKeyboardButton(text="Go down", callback_data=f"game:move_down.user:{user_id}"),
         types.InlineKeyboardButton(text="Go right", callback_data=f"game:move_right.user:{user_id}"),
-    )
-    markup.add(
-        types.InlineKeyboardButton(text="Settings", callback_data=f"game:settings_menu.user:{user_id}")
     )
     data_api.get_small_maze(uuid=data_api.get_uuid(user_id=user_id))
     with open(f"{data_api.dirs["temp maze files"]}/temp_maze_{data_api.get_uuid(user_id=user_id)}.png", "rb") as file:

@@ -32,6 +32,20 @@ def start_api():
     )
     """)
     conn.commit()
+    cur.execute("""
+    create table if not exists items (
+        item_id integer,
+        item_name text
+    )
+    """)
+    conn.commit()
+    if cur.execute("select * from items").fetchone() is None:
+        items = [
+            [0, "Empty"]  # TODO add more items in v0.0.8b
+        ]
+        for el in items:
+            cur.execute("insert into items values (?, ?)", (el[0], el[1]))
+            conn.commit()
 
 
 def to_str(to_convert: list) -> str:
@@ -169,3 +183,7 @@ def change_inventory_slot(*, user_id: int, slot: int):
         save_data["player"]["inventory"]["active slot"] = slot
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
         save_file.write(json.dumps(save_data))
+
+
+def get_item(*, item_id: int) -> str:
+    return cur.execute("select item_name from items where item_id=?", (item_id,)).fetchone()[0]

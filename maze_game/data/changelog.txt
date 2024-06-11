@@ -15,7 +15,8 @@ v0.0.7b
 - Implemented game save file deletion
 - Changed the commit messages
 - Removed unneeded secret key check from data API
-- Implemented inventory (items will be implemented in v0.0.9b)
+- Implemented inventory (items will be implemented in v0.0.8b)
+- Removed spells menu
 Release:
 
 Post-Release updates:
