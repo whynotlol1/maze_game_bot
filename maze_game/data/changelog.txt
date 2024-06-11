@@ -14,6 +14,8 @@ v0.0.6b
 v0.0.7b
 - Implemented game save file deletion
 - Changed the commit messages
+- Removed unneeded secret key check from data API
+- Implemented inventory (items will be implemented in v0.0.9b)
 Release:
 
 Post-Release updates:

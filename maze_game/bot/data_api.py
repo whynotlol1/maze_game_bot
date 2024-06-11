@@ -1,11 +1,9 @@
 from maze_game.bot import maze_generator
 from string import ascii_letters
-from dotenv import load_dotenv
 from hashlib import sha512
 from random import randint
 from random import sample
 from os import listdir
-from os import getenv
 from os import remove
 from os import mkdir
 from os import path
@@ -22,23 +20,18 @@ dirs = {
 }
 
 
-def start_api(*, secretkey: str) -> str:
+def start_api():
     global dirs
     for dir_name in dirs.values():
         if not path.isdir(dir_name):
             mkdir(dir_name)
-    load_dotenv()
-    if secretkey == getenv("secretkey"):
-        cur.execute("""
-        create table if not exists users (
-            telegram_id integer,
-            uuid text
-        )
-        """)
-        conn.commit()
-        return "Started."
-    else:
-        return "Access denied."
+    cur.execute("""
+    create table if not exists users (
+        telegram_id integer,
+        uuid text
+    )
+    """)
+    conn.commit()
 
 
 def to_str(to_convert: list) -> str:
@@ -69,7 +62,10 @@ def create_new_game(*, user_id: int):
             "level": 0,
             "health": 20,
             "mana": 50,
-            "inventory": [0, 0, 0, 0, 0],
+            "inventory": {
+                "list": [0, 0, 0, 0, 0],
+                "active slot": 2
+            },
             "spells can be used": []
         },
         "maze grid": maze_grid
@@ -153,3 +149,15 @@ def delete_save(*, user_id: int):
     remove(f"{dirs["maze files"]}/maze_{get_uuid(user_id=user_id)}.png")
     cur.execute("delete from users where telegram_id=?", (user_id,))
     conn.commit()
+
+
+def get_inventory(*, user_id: int) -> list[list]:
+    returned_list = []
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        for i in range(len(save_data["player"]["inventory"]["list"])):
+            if i == save_data["player"]["inventory"]["active slot"]:
+                returned_list.append([save_data["player"]["inventory"]["list"][i], "active"])
+            else:
+                returned_list.append([save_data["player"]["inventory"]["list"][i], "not active"])
+    return returned_list
