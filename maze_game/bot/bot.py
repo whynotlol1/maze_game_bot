@@ -40,6 +40,25 @@ def start_command_handler(message: telebot.types.Message):
         bot.send_message(message.chat.id, message_file.read(), parse_mode="html", reply_markup=markup)
 
 
+@bot.callback_query_handler(lambda call: call.data.startswith("game"))
+def callback_query_handler(call: telebot.types.CallbackQuery):
+    match call.data.replace(":", ".").split(".")[1]:  # TODO
+        case "move_up":
+            pass
+        case "move_left":
+            pass
+        case "move_down":
+            pass
+        case "move_right":
+            pass
+        case "spells_menu":
+            pass
+        case "inventory_menu":
+            pass
+        case "settings_menu":
+            pass
+
+
 def process_game(*, message: telebot.types.Message, user_id: int):
     markup = types.InlineKeyboardMarkup()
     markup.row(
