@@ -65,7 +65,7 @@ def check_if_user_has_save_file(*, user_id: int) -> bool:
 def create_new_game(*, user_id: int):
     global dirs
     uuid = gen_uuid(user_id=user_id)
-    player_position, maze_grid = maze_generator.generate(width=300, height=300, iterations=2, uuid=uuid)
+    player_position, maze_grid = maze_generator.generate(width=100, height=100, iterations=2, uuid=uuid)
     save_json = {
         "player": {
             "global maze position": player_position,

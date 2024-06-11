@@ -114,30 +114,30 @@ def generate(*, width: int, height: int, iterations: int, uuid: str):
 
     match exit_side:
         case 1:  # left, right
-            starting_coords = [0, random.randint(10, len(grid) - 30)]
+            starting_coords = [0, random.randint(10, len(grid) - 20)]
             for i in range(3):
-                for y in range(starting_coords[1], starting_coords[1] + 20):
+                for y in range(starting_coords[1], starting_coords[1] + 10):
                     grid[starting_coords[0] + i][y] = 2
             while not check_for_player_stuck(player_coords):
                 player_coords = [random.randint(len(grid[0]) // 2, len(grid[0]) - 1), random.randint(0, len(grid) - 1)]
         case 2:  # right, left
-            starting_coords = [len(grid[0]) - 1, random.randint(10, len(grid) - 30)]
+            starting_coords = [len(grid[0]) - 1, random.randint(10, len(grid) - 20)]
             for i in range(3):
-                for y in range(starting_coords[1], starting_coords[1] + 20):
+                for y in range(starting_coords[1], starting_coords[1] + 10):
                     grid[starting_coords[0] - i][y] = 2
             while not check_for_player_stuck(player_coords):
                 player_coords = [random.randint(0, len(grid[0]) // 2), random.randint(0, len(grid) - 1)]
         case 3:  # top, bottom
-            starting_coords = [random.randint(10, len(grid[0]) - 30), 0]
+            starting_coords = [random.randint(10, len(grid[0]) - 20), 0]
             for i in range(3):
-                for x in range(starting_coords[0], starting_coords[0] + 20):
+                for x in range(starting_coords[0], starting_coords[0] + 10):
                     grid[x][starting_coords[1] + i] = 2
             while not check_for_player_stuck(player_coords):
                 player_coords = [random.randint(0, len(grid[0]) - 1), random.randint(len(grid) // 2, len(grid) - 1)]
         case 4:  # bottom, top
-            starting_coords = [random.randint(10, len(grid[0]) - 30), len(grid) - 1]
+            starting_coords = [random.randint(10, len(grid[0]) - 20), len(grid) - 1]
             for i in range(3):
-                for x in range(starting_coords[0], starting_coords[0] + 20):
+                for x in range(starting_coords[0], starting_coords[0] + 10):
                     grid[x][starting_coords[1] - i] = 2
             while not check_for_player_stuck(player_coords):
                 player_coords = [random.randint(0, len(grid[0]) - 1), random.randint(0, len(grid) // 2)]
