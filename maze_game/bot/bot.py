@@ -114,9 +114,9 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             elif data[2].startswith("use_slot"):
                 user_id = int(data[4])
                 if data_api.get_user_slot(user_id=user_id) != 0:
+                    msg = bot.send_message(call.message.chat.id, f"Used item: {data_api.get_item(item_id=data_api.get_inventory(user_id=user_id)[data_api.get_user_slot(user_id=user_id)][0])[0]}")
                     data_api.use_item(user_id=user_id)
-                    msg = bot.send_message(call.message.chat.id, f"Used item.")
-                    time.sleep(0.5)
+                    time.sleep(1)
                     bot.delete_message(call.message.chat.id, msg.id)
                     private_send_inventory()
         case "settings_menu":
@@ -149,6 +149,7 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
 
 
 def process_game(*, message: telebot.types.Message, user_id: int):
+    data_api.process_ability(user_id=user_id)
     markup = types.InlineKeyboardMarkup()
     markup.row(
         types.InlineKeyboardButton(text="Settings", callback_data=f"game:settings_menu.user:{user_id}"),

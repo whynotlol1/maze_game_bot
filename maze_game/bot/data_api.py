@@ -18,6 +18,10 @@ dirs = {
     "maze files": "maze_game/data/saves/mazes",
     "temp maze files": "maze_game/data/temp_maze_files"
 }
+item_abilities = {
+    1: ["invisibility", 5],
+    2: ["breaking walls", 1]
+}
 
 
 def start_api():
@@ -78,12 +82,14 @@ def create_new_game(*, user_id: int):
             "global maze position": player_position,
             "level": 0,
             "health": 20,
-            "mana": 50,
             "inventory": {
                 "list": [0, 1, 2, 0, 0],
                 "active slot": 2
             },
-            "spells can be used": []
+            "ability": {
+                "active": "",
+                "timer": 0
+            }
         },
         "maze grid": maze_grid
     }
@@ -199,9 +205,28 @@ def get_user_slot(*, user_id: int) -> int:
 
 
 def use_item(*, user_id: int):
+    global item_abilities
     slot = get_user_slot(user_id=user_id)
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
         save_data = json.loads(save_file.read())
         save_data["player"]["inventory"]["list"][slot] = 0
+        save_data["player"]["ability"] = {
+            "active": item_abilities[get_inventory(user_id=user_id)[slot][0]][0],
+            "timer": item_abilities[get_inventory(user_id=user_id)[slot][0]][1],
+        }
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
+        save_file.write(json.dumps(save_data))
+
+
+def process_ability(*, user_id: int):
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        if save_data["player"]["ability"]["timer"] != 0:
+            save_data["player"]["ability"]["timer"] -= 1
+        if save_data["player"]["ability"]["timer"] == 0:
+            save_data["player"]["ability"] = {
+                "active": "",
+                "timer": 0,
+            }
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
         save_file.write(json.dumps(save_data))

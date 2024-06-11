@@ -21,3 +21,4 @@ v0.0.7b
 v0.0.8b
 - Added new items
 - Added use item button to inventory
+- Added abilities
