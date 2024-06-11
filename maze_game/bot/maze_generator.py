@@ -1,3 +1,5 @@
+# Credit: @xsafter
+
 from collections import deque
 from PIL import Image
 import random
