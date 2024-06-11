@@ -100,15 +100,23 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             bot.delete_message(call.message.chat.id, call.message.id)
             bot.send_message(call.message.chat.id, f"<i>Settings menu.</i>", reply_markup=markup, parse_mode="html")
         case "stop":
+            markup = types.InlineKeyboardMarkup()
+            markup.add(
+                types.InlineKeyboardButton(text="Load the game!", callback_data=f"action:load.user:{int(call.data.split(":")[2])}")
+            )
             bot.delete_message(call.message.chat.id, call.message.id)
-            bot.send_message(call.message.chat.id, f"<i>Good bye, ranger!</i>", parse_mode="html")
+            bot.send_message(call.message.chat.id, f"<i>Good bye, ranger!</i>", reply_markup=markup, parse_mode="html")
         case "continue":
             bot.delete_message(call.message.chat.id, call.message.id)
             process_game(message=call.message, user_id=int(call.data.split(":")[2]))
         case "delete":
+            markup = types.InlineKeyboardMarkup()
+            markup.add(
+                types.InlineKeyboardButton(text="Start new game!", callback_data=f"action:start.user:{int(call.data.split(":")[2])}")
+            )
             bot.delete_message(call.message.chat.id, call.message.id)
             data_api.delete_save(user_id=int(call.data.split(":")[2]))
-            bot.send_message(call.message.chat.id, f"<i>Good bye, ranger!</i>\n<b>Game save file deleted successfully.</b>", parse_mode="html")
+            bot.send_message(call.message.chat.id, f"<i>Good bye, ranger!</i>\n<b>Game save file deleted successfully.</b>", reply_markup=markup, parse_mode="html")
 
 
 def process_game(*, message: telebot.types.Message, user_id: int):
