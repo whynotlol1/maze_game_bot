@@ -69,9 +69,6 @@ def create_new_game(*, user_id: int) -> str:
             "mana": 50,
             "inventory": [0, 0, 0, 0, 0],
             "spells can be used": []
-        },
-        "maze": {
-            "file name": f"{dirs["maze files"]}/maze_{uuid}"
         }
     }
     with open(f"{dirs["save files"]}/save_{uuid}.json", "w") as save_file:
