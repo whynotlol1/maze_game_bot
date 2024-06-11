@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from base64 import b64decode
 from telebot import TeleBot
 from telebot import types
+from time import sleep
 from os import remove
 from os import getenv
 import telebot
@@ -19,9 +20,13 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
         case "start":
             data_api.create_new_game(user_id=int(call.data.split(":")[2]))
             bot.edit_message_text(f"Welcome to <i>The Maze</i>!", call.message.chat.id, call.message.id, parse_mode="html")
+            sleep(1)
+            bot.delete_message(call.message.chat.id, call.message.id)
             process_game(message=call.message, user_id=int(call.data.split(":")[2]))
         case "load":
             bot.edit_message_text(f"Welcome back to <i>The Maze</i>!", call.message.chat.id, call.message.id, parse_mode="html")
+            sleep(1)
+            bot.delete_message(call.message.chat.id, call.message.id)
             process_game(message=call.message, user_id=int(call.data.split(":")[2]))
 
 
@@ -88,12 +93,9 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
         case "settings_menu":
             markup = types.InlineKeyboardMarkup()
             markup.row(
+                types.InlineKeyboardButton(text="Continue.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}"),
                 types.InlineKeyboardButton(text="Save game and quit.", callback_data=f"game:stop.user:{int(call.data.split(":")[2])}"),
-                types.InlineKeyboardButton(text="Continue.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}")
-            )
-            markup.row(
-                types.InlineKeyboardButton(text="Delete game save.", callback_data=f"game:delete.user:{int(call.data.split(":")[2])}"),
-                types.InlineKeyboardButton(text="Coming soon.", callback_data="WIP_button_callback_data")
+                types.InlineKeyboardButton(text="Delete game save.", callback_data=f"game:delete.user:{int(call.data.split(":")[2])}")
             )
             bot.delete_message(call.message.chat.id, call.message.id)
             bot.send_message(call.message.chat.id, f"<i>Settings menu.</i>", reply_markup=markup, parse_mode="html")

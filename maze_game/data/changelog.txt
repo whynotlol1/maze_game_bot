@@ -17,7 +17,3 @@ v0.0.7b
 - Removed unneeded secret key check from data API
 - Implemented inventory (items will be implemented in v0.0.8b)
 - Removed spells menu
-v0.0.8b
-Release:
-
-Post-Release updates:
