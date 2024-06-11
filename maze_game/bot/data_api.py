@@ -138,7 +138,7 @@ def player_movement(*, user_id: int, direction: str):
                     coords = [coords[0]+1, coords[1]]
             case "left":
                 if grid[coords[0]-1][coords[1]] == 0:
-                    grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]]
+                    grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]-1][coords[1]]
                     coords = [coords[0]-1, coords[1]]
         save_data["maze grid"] = grid
         save_data["player"]["global maze position"] = coords
