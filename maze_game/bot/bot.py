@@ -43,19 +43,19 @@ def process_game(*, message: telebot.types.Message, user_id: int):
     markup = types.InlineKeyboardMarkup()
     markup.row(
         types.InlineKeyboardButton(text="Spells", callback_data=f"game:spells_menu.user:{user_id}"),
-        types.InlineKeyboardButton(text="Move up", callback_data=f"game:move_up.user:{user_id}"),
+        types.InlineKeyboardButton(text="Go up", callback_data=f"game:move_up.user:{user_id}"),
         types.InlineKeyboardButton(text="Inventory", callback_data=f"game:inventory_menu.user:{user_id}"),
     )
     markup.row(
-        types.InlineKeyboardButton(text="Move left", callback_data=f"game:move_left.user:{user_id}"),
-        types.InlineKeyboardButton(text="Move down", callback_data=f"game:move_down.user:{user_id}"),
-        types.InlineKeyboardButton(text="Move right", callback_data=f"game:move_right.user:{user_id}"),
+        types.InlineKeyboardButton(text="Go left", callback_data=f"game:move_left.user:{user_id}"),
+        types.InlineKeyboardButton(text="Go down", callback_data=f"game:move_down.user:{user_id}"),
+        types.InlineKeyboardButton(text="Go right", callback_data=f"game:move_right.user:{user_id}"),
     )
     markup.add(
         types.InlineKeyboardButton(text="Settings", callback_data=f"game:settings_menu.user:{user_id}")
     )
-    maze = data_api.get_maze(user_id=user_id)
-    with open(f"{data_api.dirs["maze files"]}/{maze}", "rb") as file:
+    data_api.get_small_maze(uuid=data_api.get_uuid(user_id=user_id))
+    with open(f"{data_api.dirs["temp maze files"]}/temp_maze_{data_api.get_uuid(user_id=user_id)}.png", "rb") as file:
         bot.send_photo(message.chat.id, file, reply_markup=markup)
 
 

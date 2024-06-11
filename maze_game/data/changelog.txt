@@ -5,7 +5,6 @@ v0.0.1b - v0.0.3b [11.06.2024]
 - Implemented player & exit generation
 v0.0.4b
 - Implemented interface
-- Implemented moving
 Release:
 
 Post-Release updates:

@@ -143,4 +143,22 @@ def generate(*, width: int, height: int, iterations: int, uuid: str):
 
     print_grid(grid, width, height, uuid)
 
-    return player_coords
+    return player_coords, grid
+
+
+def draw_small(grid, n, m, uuid):
+    color_map = {
+        0: (0, 0, 0),  # Black
+        1: (255, 255, 255),  # White
+        2: (255, 255, 0),  # Yellow
+        3: (250, 50, 0)  # Red
+    }
+    img = Image.new('RGB', (10*n, 10*m))
+    pixels = img.load()
+    for i in range(n):
+        for j in range(m):
+            for l_ in range(10):
+                for k_ in range(10):
+                    rgb_color = color_map.get(grid[i][j], (0, 0, 0))
+                    pixels[10*i+l_, 10*j+k_] = rgb_color
+    img.save(f'maze_game/data/temp_maze_files/temp_maze_{uuid}.png')
