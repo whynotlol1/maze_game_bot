@@ -19,8 +19,8 @@ dirs = {
     "temp maze files": "maze_game/data/temp_maze_files"
 }
 item_abilities = {
-    1: ["invisibility", 5],
-    2: ["breaking walls", 1]
+    1: ["invisibility", 6],
+    2: ["break walls", 2]
 }
 
 
@@ -145,20 +145,20 @@ def player_movement(*, user_id: int, direction: str):
         coords = save_data["player"]["global maze position"]
         match direction:
             case "up":
-                if grid[coords[0]][coords[1]-1] == 0:
-                    grid[coords[0]][coords[1]-1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]][coords[1]-1]
+                if grid[coords[0]][coords[1]-1] == 0 or get_ability(user_id=user_id) == "break walls":
+                    grid[coords[0]][coords[1]-1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]-1]
             case "down":
-                if grid[coords[0]][coords[1]+1] == 0:
-                    grid[coords[0]][coords[1]+1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]][coords[1]+1]
+                if grid[coords[0]][coords[1]+1] == 0 or get_ability(user_id=user_id) == "break walls":
+                    grid[coords[0]][coords[1]+1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]+1]
             case "right":
-                if grid[coords[0]+1][coords[1]] == 0:
-                    grid[coords[0]+1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]+1][coords[1]]
+                if grid[coords[0]+1][coords[1]] == 0 or get_ability(user_id=user_id) == "break walls":
+                    grid[coords[0]+1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]+1, coords[1]]
             case "left":
-                if grid[coords[0]-1][coords[1]] == 0:
-                    grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], grid[coords[0]-1][coords[1]]
+                if grid[coords[0]-1][coords[1]] == 0 or get_ability(user_id=user_id) == "break walls":
+                    grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]-1, coords[1]]
         save_data["maze grid"] = grid
         save_data["player"]["global maze position"] = coords
@@ -230,3 +230,9 @@ def process_ability(*, user_id: int):
             }
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
         save_file.write(json.dumps(save_data))
+
+
+def get_ability(*, user_id: int):
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        return save_data["player"]["ability"]["active"]

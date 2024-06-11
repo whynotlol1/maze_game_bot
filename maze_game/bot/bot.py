@@ -1,5 +1,3 @@
-import time
-
 from Crypto.Util.number import long_to_bytes
 from maze_game.bot import data_api
 from dotenv import load_dotenv
@@ -116,7 +114,7 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
                 if data_api.get_user_slot(user_id=user_id) != 0:
                     msg = bot.send_message(call.message.chat.id, f"Used item: {data_api.get_item(item_id=data_api.get_inventory(user_id=user_id)[data_api.get_user_slot(user_id=user_id)][0])[0]}")
                     data_api.use_item(user_id=user_id)
-                    time.sleep(1)
+                    sleep(1)
                     bot.delete_message(call.message.chat.id, msg.id)
                     private_send_inventory()
         case "settings_menu":
