@@ -1,9 +1,4 @@
 Hello and welcome to <b>The Maze Game</b>.
 
-Here is the short description of the game:
-You are trapped inside a unique randomly generated maze. To win the game, you have to find an exit.
-However, you are not alone in the maze. On your way out you may or may not encounter 3 types of monsters.
-You can choose to fight the monster or to run away from it. If you choose to run away, you stay safe. But if you choose to fight the monster, you can get valuable loot.
-
 -----------------------
 Game version: v0.0.7b

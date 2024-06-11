@@ -28,6 +28,18 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             sleep(1)
             bot.delete_message(call.message.chat.id, call.message.id)
             process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+        case "about":
+            markup = types.InlineKeyboardMarkup()
+            if data_api.check_if_user_has_save_file(user_id=int(call.data.split(":")[2])):
+                markup.add(
+                    types.InlineKeyboardButton(text="Load saved game!", callback_data=f"action:load.user:{int(call.data.split(":")[2])}")
+                )
+            else:
+                markup.add(
+                    types.InlineKeyboardButton(text="Start!", callback_data=f"action:start.user:{int(call.data.split(":")[2])}")
+                )
+            with open("maze_game/data/message_strings/about.txt", "r") as message_file:
+                bot.edit_message_text(message_file.read(), call.message.chat.id, call.message.id, reply_markup=markup, parse_mode="html")
 
 
 @bot.message_handler(commands=["start"])
@@ -41,6 +53,9 @@ def start_command_handler(message: telebot.types.Message):
         markup.add(
             types.InlineKeyboardButton(text="Start!", callback_data=f"action:start.user:{message.from_user.id}")
         )
+    markup.add(
+        types.InlineKeyboardButton(text="About the game.", callback_data=f"action:about.user:{message.from_user.id}")
+    )
     with open("maze_game/data/message_strings/start.txt", "r") as message_file:
         bot.send_message(message.chat.id, message_file.read(), parse_mode="html", reply_markup=markup)
 

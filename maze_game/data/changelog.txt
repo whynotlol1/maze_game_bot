@@ -17,3 +17,4 @@ v0.0.7b
 - Removed unneeded secret key check from data API
 - Implemented inventory (items will be implemented in v0.0.8b)
 - Removed spells menu
+- Changed the way game description is shown
