@@ -32,7 +32,7 @@ def start_api():
     for file_name in list(dirs.values())[-2:]:
         if not path.isfile(file_name):
             with open(file_name, "w") as file:
-            file.write("{}")
+                file.write("{}")
     with open(dirs["items"], "w") as file:
         items = {
             0: ["Empty", ""],
