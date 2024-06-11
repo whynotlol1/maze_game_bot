@@ -1,9 +1,12 @@
+import os
+
 from maze_game.bot import maze_generator
 from string import ascii_letters
 from dotenv import load_dotenv
 from hashlib import sha512
 from random import randint
 from random import sample
+from os import listdir
 from os import getenv
 from os import mkdir
 from os import path
@@ -61,7 +64,6 @@ def create_new_game(*, user_id: int) -> str:
     uuid = gen_uuid(user_id=user_id)
     player_position = maze_generator.generate(width=300, height=300, iterations=2, uuid=uuid)
     save_json = {
-        "UUID": uuid,
         "player": {
             "global maze position": player_position,
             "level": 0,
@@ -76,3 +78,16 @@ def create_new_game(*, user_id: int) -> str:
     cur.execute("insert into users values (?, ?)", (user_id, uuid))
     conn.commit()
     return uuid
+
+
+def get_maze(user_id: int) -> str:
+    global dirs
+    uuid = cur.execute("select uuid from users where telegram_id=?", (user_id,)).fetchone()[0]
+    files = os.listdir(dirs["maze files"])
+    for file in files:
+        if file.find(uuid) != -1:
+            return file
+
+
+def get_uuid(user_id: int) -> str:
+    return cur.execute("select uuid from users where telegram_id=?", (user_id,)).fetchone()[0]
