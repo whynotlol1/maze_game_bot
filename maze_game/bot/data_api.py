@@ -161,3 +161,11 @@ def get_inventory(*, user_id: int) -> list[list]:
             else:
                 returned_list.append([save_data["player"]["inventory"]["list"][i], "not active"])
     return returned_list
+
+
+def change_inventory_slot(*, user_id: int, slot: int):
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        save_data["player"]["inventory"]["active slot"] = slot
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
+        save_file.write(json.dumps(save_data))

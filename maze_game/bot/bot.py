@@ -42,6 +42,20 @@ def start_command_handler(message: telebot.types.Message):
 
 @bot.callback_query_handler(lambda call: call.data.startswith("game"))
 def callback_query_handler(call: telebot.types.CallbackQuery):
+    def private_send_inventory():
+        message_text = ""
+        inventory = data_api.get_inventory(user_id=int(call.data.split(":")[2]))
+        markup = types.InlineKeyboardMarkup()
+        for i in range(5):
+            markup.add(
+                types.InlineKeyboardButton(text=f"Slot {i + 1} {"(active)" if inventory[i][1] == "active" else ""}", callback_data=f"game:inventory.slot_choose_{i}.user:{int(call.data.split(":")[2])}"),
+            )
+        markup.add(types.InlineKeyboardButton(text="Back to maze.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}"))
+        for i in range(len(inventory)):
+            message_text += f"<i>Slot {i + 1}</i>: <b>TODO: data_api.get_item(item_id={inventory[i][0]})</b>\n"  # TODO v0.0.9b
+        bot.delete_message(call.message.chat.id, call.message.id)
+        bot.send_message(call.message.chat.id, message_text, reply_markup=markup, parse_mode="html")
+
     match call.data.replace(":", ".").split(".")[1]:
         case "move_up":
             data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="up")
@@ -62,18 +76,13 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
         case "spells_menu":  # TODO v0.0.8b
             pass
         case "inventory_menu":
-            message_text = ""
-            inventory = data_api.get_inventory(user_id=int(call.data.split(":")[2]))
-            markup = types.InlineKeyboardMarkup()
-            for i in range(5):
-                markup.add(
-                    types.InlineKeyboardButton(text=f"Slot {i+1} {"(active)" if inventory[i][1] == "active" else ""}", callback_data=f"game:inventory.inventroy:slot_choose_{i}.user:{int(call.data.split(":")[2])}"),
-                )
-            markup.add(types.InlineKeyboardButton(text="Back to maze.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}"))
-            for i in range(len(inventory)):
-                message_text += f"<i>Slot {i+1}</i>: <b>TODO: data_api.get_item(item_id={inventory[i][0]})</b>\n"  # TODO v0.0.9b
-            bot.delete_message(call.message.chat.id, call.message.id)
-            bot.send_message(call.message.chat.id, message_text, reply_markup=markup,  parse_mode="html")
+            private_send_inventory()
+        case "inventory":
+            data = call.data.replace(":", ".").split(".")
+            user_id = int(data[4])
+            slot = int(data[2][-1])
+            data_api.change_inventory_slot(user_id=user_id, slot=slot)
+            private_send_inventory()
         case "settings_menu":
             markup = types.InlineKeyboardMarkup()
             markup.row(
