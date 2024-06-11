@@ -170,4 +170,4 @@ def process_game(*, message: telebot.types.Message, user_id: int):
 @bot.message_handler(content_types=["text"])
 def on_command_error(message: telebot.types.Message):
     if message.text.startswith("/"):
-        bot.send_message(message.chat.id, "Unknown command. Use <b>/help</b> for a list of commands.", parse_mode="html")
+        bot.send_message(message.chat.id, "Unknown command.", parse_mode="html")
