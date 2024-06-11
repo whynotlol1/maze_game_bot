@@ -117,6 +117,10 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
                     sleep(1)
                     bot.delete_message(call.message.chat.id, msg.id)
                     private_send_inventory()
+                else:
+                    msg = bot.send_message(call.message.chat.id, f"No item to use.")
+                    sleep(1)
+                    bot.delete_message(call.message.chat.id, msg.id)
         case "settings_menu":
             markup = types.InlineKeyboardMarkup()
             markup.row(
