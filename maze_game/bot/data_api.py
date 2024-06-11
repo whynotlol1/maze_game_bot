@@ -6,6 +6,7 @@ from random import randint
 from random import sample
 from os import listdir
 from os import getenv
+from os import remove
 from os import mkdir
 from os import path
 import sqlite3
@@ -144,3 +145,11 @@ def player_movement(*, user_id: int, direction: str):
         save_data["player"]["global maze position"] = coords
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
         save_file.write(json.dumps(save_data))
+
+
+def delete_save(*, user_id: int):
+    global dirs
+    remove(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json")
+    remove(f"{dirs["maze files"]}/maze_{get_uuid(user_id=user_id)}.png")
+    cur.execute("delete from users where telegram_id=?", (user_id,))
+    conn.commit()

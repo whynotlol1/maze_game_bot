@@ -11,6 +11,9 @@ v0.0.5b
 v0.0.6b
 - Old maze pictures are getting deleted after player presses a button
 - Implemented settings menu
+v0.0.7b
+- Implemented game save file deletion
+- Changed the commit messages
 Release:
 
 Post-Release updates:
