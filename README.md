@@ -1,5 +1,5 @@
 # --<>--<>--<>--maze_game_bot--<>--<>--<>--
-# The Maze Game Telegrma bot
+# The Maze Game Telegram bot
 This is the official repository of The Maze Game Telegram bot.
 ## Table of contents
 
