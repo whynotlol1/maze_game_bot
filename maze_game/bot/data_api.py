@@ -35,16 +35,19 @@ def start_api():
     cur.execute("""
     create table if not exists items (
         item_id integer,
-        item_name text
+        item_name text,
+        ability text
     )
     """)
     conn.commit()
     if cur.execute("select * from items").fetchone() is None:
         items = [
-            [0, "Empty"]  # TODO add more items in v0.0.8b
+            [0, "Empty", ""],
+            [1, "Potion of Invisibility", "Makes you invisible to monsters for 5 moves."],
+            [2, "The Maze Hammer", "Lets you break a wall block."]
         ]
         for el in items:
-            cur.execute("insert into items values (?, ?)", (el[0], el[1]))
+            cur.execute("insert into items values (?, ?, ?)", (el[0], el[1], el[2]))
             conn.commit()
 
 
@@ -77,7 +80,7 @@ def create_new_game(*, user_id: int):
             "health": 20,
             "mana": 50,
             "inventory": {
-                "list": [0, 0, 0, 0, 0],
+                "list": [0, 1, 2, 0, 0],
                 "active slot": 2
             },
             "spells can be used": []
@@ -186,4 +189,19 @@ def change_inventory_slot(*, user_id: int, slot: int):
 
 
 def get_item(*, item_id: int) -> str:
-    return cur.execute("select item_name from items where item_id=?", (item_id,)).fetchone()[0]
+    return cur.execute("select item_name, ability from items where item_id=?", (item_id,)).fetchone()
+
+
+def get_user_slot(*, user_id: int) -> int:
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        return save_data["player"]["inventory"]["list"][save_data["player"]["inventory"]["active slot"]]
+
+
+def use_item(*, user_id: int):
+    slot = get_user_slot(user_id=user_id)
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        save_data["player"]["inventory"]["list"][slot] = 0
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
+        save_file.write(json.dumps(save_data))

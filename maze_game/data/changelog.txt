@@ -18,3 +18,6 @@ v0.0.7b
 - Implemented inventory (items will be implemented in v0.0.8b)
 - Removed spells menu
 - Changed the way game description is shown
+v0.0.8b
+- Added new items
+- Added use item button to inventory

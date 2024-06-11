@@ -1,3 +1,5 @@
+import time
+
 from Crypto.Util.number import long_to_bytes
 from maze_game.bot import data_api
 from dotenv import load_dotenv
@@ -73,9 +75,12 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             types.InlineKeyboardButton(text=f"Slot 4", callback_data=f"game:inventory.slot_choose_3.user:{int(call.data.split(":")[2])}"),
             types.InlineKeyboardButton(text=f"Slot 5", callback_data=f"game:inventory.slot_choose_4.user:{int(call.data.split(":")[2])}"),
         )
-        markup.add(types.InlineKeyboardButton(text="Back to maze.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}"))
+        markup.row(
+            types.InlineKeyboardButton(text="Use item.", callback_data=f"game:inventory.use_slot.user:{int(call.data.split(":")[2])}"),
+            types.InlineKeyboardButton(text="Back to maze.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}")
+        )
         for i in range(len(inventory)):
-            message_text += f"<i>Slot {i + 1}</i>: <b>{data_api.get_item(item_id=inventory[i][0])}</b> {"| <i>(active)</i>" if inventory[i][1] == "active" else ""}\n"
+            message_text += f"<i>Slot {i + 1}</i>: <b>{data_api.get_item(item_id=inventory[i][0])[0]}</b>{f" | <i>Ability: {data_api.get_item(item_id=inventory[i][0])[1]}</i>" if data_api.get_item(item_id=inventory[i][0])[1] != "" else ""}{" | <i>(active)</i>" if inventory[i][1] == "active" else ""}\n"
         message_text += "<i>Choose active slot with the buttons below.</i>"
         bot.delete_message(call.message.chat.id, call.message.id)
         bot.send_message(call.message.chat.id, message_text, reply_markup=markup, parse_mode="html")
@@ -101,10 +106,19 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             private_send_inventory()
         case "inventory":
             data = call.data.replace(":", ".").split(".")
-            user_id = int(data[4])
-            slot = int(data[2][-1])
-            data_api.change_inventory_slot(user_id=user_id, slot=slot)
-            private_send_inventory()
+            if data[2].startswith("slot_choose"):
+                user_id = int(data[4])
+                slot = int(data[2][-1])
+                data_api.change_inventory_slot(user_id=user_id, slot=slot)
+                private_send_inventory()
+            elif data[2].startswith("use_slot"):
+                user_id = int(data[4])
+                if data_api.get_user_slot(user_id=user_id) != 0:
+                    data_api.use_item(user_id=user_id)
+                    msg = bot.send_message(call.message.chat.id, f"Used item.")
+                    time.sleep(0.5)
+                    bot.delete_message(call.message.chat.id, msg.id)
+                    private_send_inventory()
         case "settings_menu":
             markup = types.InlineKeyboardMarkup()
             markup.row(
