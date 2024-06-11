@@ -8,4 +8,4 @@ To fight the monsters, you can use melee weapons or <i>magic</i>.
 If you have played before, you can load your saved game either by clicking the button below.
 
 ---------------------
-Game version: v0.0.5b
+Game version: v0.0.6b-pre1
