@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from base64 import b64decode
 from telebot import TeleBot
 from telebot import types
+from os import remove
 from os import getenv
 import telebot
 
@@ -57,6 +58,7 @@ def process_game(*, message: telebot.types.Message, user_id: int):
     data_api.get_small_maze(uuid=data_api.get_uuid(user_id=user_id))
     with open(f"{data_api.dirs["temp maze files"]}/temp_maze_{data_api.get_uuid(user_id=user_id)}.png", "rb") as file:
         bot.send_photo(message.chat.id, file, reply_markup=markup)
+    remove(f"{data_api.dirs["temp maze files"]}/temp_maze_{data_api.get_uuid(user_id=user_id)}.png")
 
 
 @bot.message_handler(content_types=["text"])
