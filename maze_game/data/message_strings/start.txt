@@ -1,10 +1,8 @@
 Hello and welcome to <b>The Maze Game</b>.
 
 Here is the short description of the game:
-After clicking the <b>Start!</b> button, you spawn inside a unique randomly generated maze. To win the game, you have to find an exit.
+You are trapped inside a unique randomly generated maze. To win the game, you have to find an exit.
 However, you are not alone in the maze. On your way out you may or may not encounter 3 types of monsters.
 
-If you have played before, you can load your saved game either by clicking the button below.
-
----------------------
+-----------------------
 Game version: v0.0.8b
