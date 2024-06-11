@@ -8,7 +8,8 @@ def print_grid(grid, n: int, m: int, uuid: str):
         0: (0, 0, 0),  # Black
         1: (255, 255, 255),  # White
         2: (255, 255, 0),  # Yellow
-        3: (250, 50, 0)  # Red
+        3: (0, 50, 250),  # Blue
+        4: (250, 50, 0)  # Red
     }
     img = Image.new('RGB', (n, m))
     pixels = img.load()
@@ -151,7 +152,8 @@ def draw_small(grid, n, m, uuid):
         0: (0, 0, 0),  # Black
         1: (255, 255, 255),  # White
         2: (255, 255, 0),  # Yellow
-        3: (250, 50, 0)  # Red
+        3: (0, 50, 250),  # Blue
+        4: (250, 50, 0)  # Red
     }
     img = Image.new('RGB', (10*n, 10*m))
     pixels = img.load()
