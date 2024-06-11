@@ -83,8 +83,8 @@ def create_new_game(*, user_id: int):
             "level": 0,
             "health": 20,
             "inventory": {
-                "list": [0, 1, 2, 0, 0],
-                "active slot": 2
+                "list": [0, 0, 0, 0, 0],
+                "active slot": 0
             },
             "ability": {
                 "active": "",

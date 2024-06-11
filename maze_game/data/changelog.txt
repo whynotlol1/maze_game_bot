@@ -22,3 +22,4 @@ v0.0.8b
 - Added new items
 - Added use item button to inventory
 - Added abilities
+- Fully implemented breaking walls ability
