@@ -5,7 +5,7 @@ After clicking the <b>Start!</b> button, you spawn inside a unique randomly gene
 However, you are not alone in the maze. On your way out you may or may not encounter 3 types of monsters.
 To fight the monsters, you can use melee weapons or <i>magic</i>.
 
-If you have played before, you can load your saved game either by clicking the button below or by using <b>/load_by_uuid</b> command
+If you have played before, you can load your saved game either by clicking the button below.
 
 ---------------------
-Game version: v0.0.3b
+Game version: v0.0.5b-pre1

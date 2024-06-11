@@ -77,7 +77,6 @@ def create_new_game(*, user_id: int) -> str:
         save_file.write(json.dumps(save_json))
     cur.execute("insert into users values (?, ?)", (user_id, uuid))
     conn.commit()
-    return uuid
 
 
 def get_maze(*, user_id: int) -> str:
