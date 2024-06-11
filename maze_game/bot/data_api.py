@@ -65,7 +65,7 @@ def check_if_user_has_save_file(*, user_id: int) -> bool:
 def create_new_game(*, user_id: int):
     global dirs
     uuid = gen_uuid(user_id=user_id)
-    player_position, maze_grid = maze_generator.generate(width=100, height=100, iterations=3, uuid=uuid)
+    player_position, maze_grid = maze_generator.generate(width=100, height=100, iterations=1, uuid=uuid)
     save_json = {
         "player": {
             "global maze position": player_position,
@@ -139,19 +139,19 @@ def player_movement(*, user_id: int, direction: str):
         coords = save_data["player"]["global maze position"]
         match direction:
             case "up":
-                if grid[coords[0]][coords[1]-1] == 0 or get_ability(user_id=user_id) == "break walls":
+                if grid[coords[0]][coords[1]-1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
                     grid[coords[0]][coords[1]-1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]-1]
             case "down":
-                if grid[coords[0]][coords[1]+1] == 0 or get_ability(user_id=user_id) == "break walls":
+                if grid[coords[0]][coords[1]+1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
                     grid[coords[0]][coords[1]+1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]+1]
             case "right":
-                if grid[coords[0]+1][coords[1]] == 0 or get_ability(user_id=user_id) == "break walls":
+                if grid[coords[0]+1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
                     grid[coords[0]+1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]+1, coords[1]]
             case "left":
-                if grid[coords[0]-1][coords[1]] == 0 or get_ability(user_id=user_id) == "break walls":
+                if grid[coords[0]-1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
                     grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]-1, coords[1]]
         save_data["maze grid"] = grid
