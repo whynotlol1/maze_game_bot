@@ -42,7 +42,7 @@ def start_command_handler(message: telebot.types.Message):
 
 @bot.callback_query_handler(lambda call: call.data.startswith("game"))
 def callback_query_handler(call: telebot.types.CallbackQuery):
-    match call.data.replace(":", ".").split(".")[1]:  # TODO
+    match call.data.replace(":", ".").split(".")[1]:
         case "move_up":
             data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="up")
             bot.delete_message(call.message.chat.id, call.message.id)
@@ -59,12 +59,25 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="right")
             bot.delete_message(call.message.chat.id, call.message.id)
             process_game(message=call.message, user_id=int(call.data.split(":")[2]))
-        case "spells_menu":
+        case "spells_menu":  # TODO v0.0.8b
             pass
-        case "inventory_menu":
+        case "inventory_menu":  # TODO v0.0.7b
             pass
         case "settings_menu":
-            pass
+            markup = types.InlineKeyboardMarkup()
+            markup.row(
+                types.InlineKeyboardButton(text="Save game and quit.", callback_data=f"game:stop.user:{int(call.data.split(":")[2])}"),
+                types.InlineKeyboardButton(text="Continue.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}")
+            )
+            markup.add(types.InlineKeyboardButton(text="Coming soon.", callback_data="WIP_button_callback_data"))
+            bot.delete_message(call.message.chat.id, call.message.id)
+            bot.send_message(call.message.chat.id, f"<i>Settings menu.</i>", reply_markup=markup, parse_mode="html")
+        case "stop":
+            bot.delete_message(call.message.chat.id, call.message.id)
+            bot.send_message(call.message.chat.id, f"<i>Good bye, ranger!</i>", parse_mode="html")
+        case "continue":
+            bot.delete_message(call.message.chat.id, call.message.id)
+            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
 
 
 def process_game(*, message: telebot.types.Message, user_id: int):

@@ -10,6 +10,7 @@ v0.0.5b
 - Remade saves system: user cannot have several saves
 v0.0.6b
 - Old maze pictures are getting deleted after player presses a button
+- Implemented settings menu
 Release:
 
 Post-Release updates:
