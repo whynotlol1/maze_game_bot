@@ -1,4 +1,4 @@
 Hello and welcome to <b>The Maze Game</b>.
 
 -----------------------
-Game version: v0.0.8b
+Game version: v0.0.9b

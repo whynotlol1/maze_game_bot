@@ -23,3 +23,5 @@ v0.0.8b
 - Added use item button to inventory
 - Added abilities
 - Fully implemented breaking walls ability
+v0.0.9b
+- Changed the way data is saved (SQL --> JSON)

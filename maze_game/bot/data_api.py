@@ -7,16 +7,16 @@ from os import listdir
 from os import remove
 from os import mkdir
 from os import path
-import sqlite3
 import json
 
 
-conn = sqlite3.connect(database="maze_game/data/data.db", check_same_thread=False)
-cur = conn.cursor()
 dirs = {
     "save files": "maze_game/data/saves",
     "maze files": "maze_game/data/saves/mazes",
-    "temp maze files": "maze_game/data/temp_maze_files"
+    "temp maze files": "maze_game/data/temp_maze_files",
+    "system files": "maze_game/data/system",
+    "users": "maze_game/data/system/users.json",
+    "items": "maze_game/data/system/items.json"
 }
 item_abilities = {
     1: ["invisibility", 6],
@@ -26,33 +26,21 @@ item_abilities = {
 
 def start_api():
     global dirs
-    for dir_name in dirs.values():
+    for dir_name in list(dirs.values())[:-2]:
         if not path.isdir(dir_name):
             mkdir(dir_name)
-    cur.execute("""
-    create table if not exists users (
-        telegram_id integer,
-        uuid text
-    )
-    """)
-    conn.commit()
-    cur.execute("""
-    create table if not exists items (
-        item_id integer,
-        item_name text,
-        ability text
-    )
-    """)
-    conn.commit()
-    if cur.execute("select * from items").fetchone() is None:
-        items = [
-            [0, "Empty", ""],
-            [1, "Potion of Invisibility", "Makes you invisible to monsters for 5 moves."],
-            [2, "The Maze Hammer", "Lets you break a wall block."]
-        ]
-        for el in items:
-            cur.execute("insert into items values (?, ?, ?)", (el[0], el[1], el[2]))
-            conn.commit()
+    for file_name in list(dirs.values())[-2:]:
+        if not path.isfile(file_name):
+            __f = open(file_name, "w")
+            __f.write("{}")
+            __f.close()
+    with open(dirs["items"], "w") as file:
+        items = {
+            0: ["Empty", ""],
+            1: ["Potion of Invisibility", "Makes you invisible to monsters for 5 moves."],
+            2: ["The Maze Hammer", "Lets you break a wall block."]
+        }
+        file.write(json.dumps(items))
 
 
 def to_str(to_convert: list) -> str:
@@ -69,8 +57,10 @@ def gen_uuid(user_id: int) -> str:
 
 
 def check_if_user_has_save_file(*, user_id: int) -> bool:
-    check = cur.execute("select uuid from users where telegram_id=?", (user_id,)).fetchone()
-    return check is not None
+    global dirs
+    with open(dirs["users"], "r") as file:
+        data = json.loads(file.read())
+    return user_id in data.keys()
 
 
 def create_new_game(*, user_id: int):
@@ -95,13 +85,16 @@ def create_new_game(*, user_id: int):
     }
     with open(f"{dirs["save files"]}/save_{uuid}.json", "w") as save_file:
         save_file.write(json.dumps(save_json))
-    cur.execute("insert into users values (?, ?)", (user_id, uuid))
-    conn.commit()
+    with open(dirs["users"], "r") as file:
+        data = json.loads(file.read())
+        data[user_id] = uuid
+    with open(dirs["users"], "w") as file:
+        file.write(json.dumps(data))
 
 
 def get_maze(*, user_id: int) -> str:
     global dirs
-    uuid = cur.execute("select uuid from users where telegram_id=?", (user_id,)).fetchone()[0]
+    uuid = get_uuid(user_id=user_id)
     files = listdir(dirs["maze files"])
     for file in files:
         if file.find(uuid) != -1:
@@ -109,7 +102,9 @@ def get_maze(*, user_id: int) -> str:
 
 
 def get_uuid(*, user_id: int) -> str:
-    return cur.execute("select uuid from users where telegram_id=?", (user_id,)).fetchone()[0]
+    with open(dirs["users"], "r") as file:
+        data = json.loads(file.read())
+    return data[str(user_id)]
 
 
 def get_small_maze(uuid: str):
@@ -170,8 +165,11 @@ def delete_save(*, user_id: int):
     global dirs
     remove(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json")
     remove(f"{dirs["maze files"]}/maze_{get_uuid(user_id=user_id)}.png")
-    cur.execute("delete from users where telegram_id=?", (user_id,))
-    conn.commit()
+    with open(dirs["users"], "r") as file:
+        data = json.loads(file.read())
+    del data[str(user_id)]
+    with open(dirs["users"], "w") as file:
+        file.write(json.dumps(data))
 
 
 def get_inventory(*, user_id: int) -> list[list]:
@@ -195,7 +193,9 @@ def change_inventory_slot(*, user_id: int, slot: int):
 
 
 def get_item(*, item_id: int) -> str:
-    return cur.execute("select item_name, ability from items where item_id=?", (item_id,)).fetchone()
+    with open(dirs["items"], "r") as file:
+        data = json.loads(file.read())
+    return data[str(item_id)]
 
 
 def get_user_slot(*, user_id: int) -> int:
