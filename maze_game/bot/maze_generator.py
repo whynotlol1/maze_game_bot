@@ -71,7 +71,7 @@ def flood_find_empty(grid, tries, goal):
     return new_grid, percentage
 
 
-def generate(*, width: int, height: int, iterations: int, uuid: str):
+def generate(*, width: int, height: int, iterations: int):
     chance = 40
     count = 5
     flood_tries = 5
@@ -144,7 +144,7 @@ def generate(*, width: int, height: int, iterations: int, uuid: str):
     return player_coords, grid
 
 
-def draw_small(grid, n, m, uuid):
+def draw_small(grid, n, m, user_id):
     color_map = {
         0: (0, 0, 0),  # Black
         1: (255, 255, 255),  # White
@@ -160,4 +160,4 @@ def draw_small(grid, n, m, uuid):
                 for k_ in range(10):
                     rgb_color = color_map.get(grid[i][j], (0, 0, 0))
                     pixels[10*i+l_, 10*j+k_] = rgb_color
-    img.save(f'maze_game/data/temp_maze_files/temp_maze_{uuid}.png')
+    img.save(f'maze_game/data/temp_maze_files/temp_maze_{user_id}.png')
