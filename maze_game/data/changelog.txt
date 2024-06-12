@@ -28,3 +28,6 @@ v0.0.9b
 - Mazes are now 100x100 (used to be 300x300)
 - Implemented monsters generation
 - Implemented moving to monsters
+- Removed unneeded directory
+- Removed saving whole maze pictures from maze generation as it's not needed
+- Got ready to implement the fighting system

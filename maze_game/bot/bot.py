@@ -141,8 +141,8 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             markup = types.InlineKeyboardMarkup()
             markup.row(
                 types.InlineKeyboardButton(text="Continue.", callback_data=f"game:continue.user:{int(call.data.split(":")[2])}"),
-                types.InlineKeyboardButton(text="Save game and quit.", callback_data=f"game:stop.user:{int(call.data.split(":")[2])}"),
-                types.InlineKeyboardButton(text="Delete game save.", callback_data=f"game:delete.user:{int(call.data.split(":")[2])}")
+                types.InlineKeyboardButton(text="Save and quit.", callback_data=f"game:stop.user:{int(call.data.split(":")[2])}"),
+                types.InlineKeyboardButton(text="Delete game.", callback_data=f"game:delete.user:{int(call.data.split(":")[2])}")
             )
             bot.delete_message(call.message.chat.id, call.message.id)
             bot.send_message(call.message.chat.id, f"<i>Settings menu.</i>", reply_markup=markup, parse_mode="html")

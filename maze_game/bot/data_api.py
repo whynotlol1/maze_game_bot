@@ -3,7 +3,6 @@ from string import ascii_letters
 from hashlib import sha512
 from random import randint
 from random import sample
-from os import listdir
 from os import remove
 from os import mkdir
 from os import path
@@ -12,7 +11,6 @@ import json
 
 dirs = {
     "save files": "maze_game/data/saves",
-    "maze files": "maze_game/data/saves/mazes",
     "temp maze files": "maze_game/data/temp_maze_files",
     "system files": "maze_game/data/system",
     "users": "maze_game/data/system/users.json",
@@ -72,7 +70,7 @@ def create_new_game(*, user_id: int):
             "level": 0,
             "health": 20,
             "inventory": {
-                "list": [1, 0, 0, 0, 0],
+                "list": [0, 0, 0, 0, 0],
                 "active slot": 0
             },
             "ability": {
@@ -89,15 +87,6 @@ def create_new_game(*, user_id: int):
         data[user_id] = uuid
     with open(dirs["users"], "w") as file:
         file.write(json.dumps(data))
-
-
-def get_maze(*, user_id: int) -> str:
-    global dirs
-    uuid = get_uuid(user_id=user_id)
-    files = listdir(dirs["maze files"])
-    for file in files:
-        if file.find(uuid) != -1:
-            return file
 
 
 def get_uuid(*, user_id: int) -> str:
@@ -139,33 +128,49 @@ def player_movement(*, user_id: int, direction: str) -> str:
         coords = save_data["player"]["global maze position"]
         match direction:
             case "up":
-                if grid[coords[0]][coords[1]-1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]][coords[1]-1] in [0, 1]) or (grid[coords[0]][coords[1]-1] == 4 and get_ability(user_id=user_id) == "invisibility"):
+                if grid[coords[0]][coords[1]-1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]][coords[1]-1] in [0, 1]):
                     grid[coords[0]][coords[1]-1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]-1]
+                    return_value = "OK"
+                elif grid[coords[0]][coords[1]-1] == 4 and get_ability(user_id=user_id) == "invisibility":
+                    grid[coords[0]][coords[1]-2], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
+                    coords = [coords[0], coords[1]-2]
                     return_value = "OK"
                 elif grid[coords[0]][coords[1]-1] == 4 and get_ability(user_id=user_id) != "invisibility":
                     coords = [coords[0], coords[1]-1]
                     return_value = "FIGHT"
             case "down":
-                if grid[coords[0]][coords[1]+1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]][coords[1]+1] in [0, 1]) or (grid[coords[0]][coords[1]+1] == 4 and get_ability(user_id=user_id) == "invisibility"):
+                if grid[coords[0]][coords[1]+1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]][coords[1]+1] in [0, 1]):
                     grid[coords[0]][coords[1]+1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]+1]
+                    return_value = "OK"
+                elif grid[coords[0]][coords[1]+1] == 4 and get_ability(user_id=user_id) == "invisibility":
+                    grid[coords[0]][coords[1]+2], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
+                    coords = [coords[0], coords[1]+2]
                     return_value = "OK"
                 elif grid[coords[0]][coords[1]+1] == 4 and get_ability(user_id=user_id) != "invisibility":
                     coords = [coords[0], coords[1]+1]
                     return_value = "FIGHT"
             case "right":
-                if grid[coords[0]+1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]) or (grid[coords[0]+1][coords[1]] == 4 and get_ability(user_id=user_id) == "invisibility"):
+                if grid[coords[0]+1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
                     grid[coords[0]+1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]+1, coords[1]]
+                    return_value = "OK"
+                elif grid[coords[0]+1][coords[1]] == 4 and get_ability(user_id=user_id) == "invisibility":
+                    grid[coords[0]+2][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
+                    coords = [coords[0]+2, coords[1]]
                     return_value = "OK"
                 elif grid[coords[0]+1][coords[1]] == 4 and get_ability(user_id=user_id) != "invisibility":
                     coords = [coords[0]+1, coords[1]]
                     return_value = "FIGHT"
             case "left":
-                if grid[coords[0]-1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]-1][coords[1]] in [0, 1]) or (grid[coords[0]-1][coords[1]] == 4 and get_ability(user_id=user_id) == "invisibility"):
+                if grid[coords[0]-1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]-1][coords[1]] in [0, 1]):
                     grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]-1, coords[1]]
+                    return_value = "OK"
+                elif grid[coords[0]-1][coords[1]] == 4 and get_ability(user_id=user_id) == "invisibility":
+                    grid[coords[0]-2][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
+                    coords = [coords[0]-2, coords[1]]
                     return_value = "OK"
                 elif grid[coords[0]-1][coords[1]] == 4 and get_ability(user_id=user_id) != "invisibility":
                     coords = [coords[0]-1, coords[1]]
@@ -180,7 +185,6 @@ def player_movement(*, user_id: int, direction: str) -> str:
 def delete_save(*, user_id: int):
     global dirs
     remove(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json")
-    remove(f"{dirs["maze files"]}/maze_{get_uuid(user_id=user_id)}.png")
     with open(dirs["users"], "r") as file:
         data = json.loads(file.read())
     del data[str(user_id)]

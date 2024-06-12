@@ -5,23 +5,6 @@ from PIL import Image
 import random
 
 
-def print_grid(grid, n: int, m: int, uuid: str):
-    color_map = {
-        0: (0, 0, 0),  # Black
-        1: (255, 255, 255),  # White
-        2: (255, 255, 0),  # Yellow
-        3: (0, 50, 250),  # Blue
-        4: (250, 50, 0)  # Red
-    }
-    img = Image.new('RGB', (n, m))
-    pixels = img.load()
-    for i in range(img.size[0]):
-        for j in range(img.size[1]):
-            rgb_color = color_map.get(grid[i][j], (0, 0, 0))
-            pixels[i, j] = rgb_color
-    img.save(f'maze_game/data/saves/mazes/maze_{uuid}.png')
-
-
 def make_grid(width, height):
     newgrid = [[0 for _ in range(height)] for _ in range(width)]
     for i in range(len(newgrid)):
@@ -157,8 +140,6 @@ def generate(*, width: int, height: int, iterations: int, uuid: str):
 
     for coords in coords_list:
         grid[coords[0]][coords[1]] = 4
-
-    print_grid(grid, width, height, uuid)
 
     return player_coords, grid
 
