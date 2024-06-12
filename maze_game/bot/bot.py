@@ -222,10 +222,13 @@ def process_fight(user_action: str = "None", *, message: telebot.types.Message, 
     else:
         bot.send_message(message.chat.id, message_text, parse_mode="html")
     if data[0] <= 0:
-        bot.send_message(message.chat.id, "You lost the fight!")
         remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
         remove(f"{data_api.dirs["save files"]}/save_{user_id}.json")
-        start_command_handler(message=message)
+        markup = types.InlineKeyboardMarkup()
+        markup.add(
+            types.InlineKeyboardButton(text="Start new game!", callback_data=f"action:start.user:{user_id}")
+        )
+        bot.send_message(message.chat.id, "You lost the fight!", reply_markup=markup)
     if data[1] <= 0:
         bot.send_message(message.chat.id, "You won the fight!")
         remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
