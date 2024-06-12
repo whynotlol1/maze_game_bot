@@ -30,16 +30,14 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             process_game(message=call.message, user_id=int(call.data.split(":")[2]))
         case "about":
             markup = types.InlineKeyboardMarkup()
-            if data_api.check_if_user_has_save_file(user_id=int(call.data.split(":")[2])):
-                markup.add(
-                    types.InlineKeyboardButton(text="Load saved game!", callback_data=f"action:load.user:{int(call.data.split(":")[2])}")
-                )
-            else:
-                markup.add(
-                    types.InlineKeyboardButton(text="Start!", callback_data=f"action:start.user:{int(call.data.split(":")[2])}")
-                )
+            markup.add(
+                types.InlineKeyboardButton(text="Get back.", callback_data=f"action:back.user:{int(call.data.split(":")[2])}")
+            )
             with open("maze_game/data/message_strings/about.txt", "r") as message_file:
                 bot.edit_message_text(message_file.read(), call.message.chat.id, call.message.id, reply_markup=markup, parse_mode="html")
+        case "back":
+            start_command_handler(call.message)
+            bot.delete_message(call.message.chat.id, call.message.id)
 
 
 @bot.message_handler(commands=["start"])
@@ -91,7 +89,10 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
                 case "OK":
                     process_game(message=call.message, user_id=int(call.data.split(":")[2]))
                 case "FIGHT":
-                    pass  # TODO
+                    msg = bot.send_message(call.message.chat.id, f"You met <i>The Maze Monster</i>! A fight will start in approximately 3 seconds!", parse_mode="html")
+                    sleep(3)
+                    bot.delete_message(msg.chat.id, msg.id)
+                    process_fight(message=call.message, user_id=int(call.data.split(":")[2]))
         case "move_left":
             check = data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="left")
             bot.delete_message(call.message.chat.id, call.message.id)
@@ -99,7 +100,10 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
                 case "OK":
                     process_game(message=call.message, user_id=int(call.data.split(":")[2]))
                 case "FIGHT":
-                    pass  # TODO
+                    msg = bot.send_message(call.message.chat.id, f"You met <i>The Maze Monster</i>! A fight will start in approximately 3 seconds!", parse_mode="html")
+                    sleep(3)
+                    bot.delete_message(msg.chat.id, msg.id)
+                    process_fight(message=call.message, user_id=int(call.data.split(":")[2]))
         case "move_down":
             check = data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="down")
             bot.delete_message(call.message.chat.id, call.message.id)
@@ -107,7 +111,10 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
                 case "OK":
                     process_game(message=call.message, user_id=int(call.data.split(":")[2]))
                 case "FIGHT":
-                    pass  # TODO
+                    msg = bot.send_message(call.message.chat.id, f"You met <i>The Maze Monster</i>! A fight will start in approximately 3 seconds!", parse_mode="html")
+                    sleep(3)
+                    bot.delete_message(msg.chat.id, msg.id)
+                    process_fight(message=call.message, user_id=int(call.data.split(":")[2]))
         case "move_right":
             check = data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="right")
             bot.delete_message(call.message.chat.id, call.message.id)
@@ -115,7 +122,10 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
                 case "OK":
                     process_game(message=call.message, user_id=int(call.data.split(":")[2]))
                 case "FIGHT":
-                    pass  # TODO
+                    msg = bot.send_message(call.message.chat.id, f"You met <i>The Maze Monster</i>! A fight will start in approximately 3 seconds!", parse_mode="html")
+                    sleep(3)
+                    bot.delete_message(msg.chat.id, msg.id)
+                    process_fight(message=call.message, user_id=int(call.data.split(":")[2]))
         case "inventory_menu":
             private_send_inventory()
         case "inventory":
@@ -180,12 +190,52 @@ def process_game(*, message: telebot.types.Message, user_id: int):
         types.InlineKeyboardButton(text="Go right", callback_data=f"game:move_right.user:{user_id}"),
     )
     data_api.get_small_maze(user_id=user_id)
-    with open(f"{data_api.dirs["temp maze files"]}/temp_maze_{user_id}.png", "rb") as file:
+    with open(f"{data_api.dirs["temp files"]}/temp_maze_{user_id}.png", "rb") as file:
         bot.send_photo(message.chat.id, file, reply_markup=markup)
-    remove(f"{data_api.dirs["temp maze files"]}/temp_maze_{user_id}.png")
+    remove(f"{data_api.dirs["temp files"]}/temp_maze_{user_id}.png")
+
+
+@bot.callback_query_handler(lambda call: call.data.startswith("fight"))
+def callback_query_handler(call: telebot.types.CallbackQuery):
+    bot.edit_message_text(call.message.text, call.message.chat.id, call.message.id)
+    process_fight(user_action=call.data.replace(":", ".").split(".")[1], message=call.message, user_id=int(call.data.replace(":", ".").split(".")[3]))
+
+
+def process_fight(user_action: str = "None", *, message: telebot.types.Message, user_id: int):
+    markup = None
+    if user_action == "None":
+        data = data_api.handle_fight_processor(user_id=user_id)
+    else:
+        data = data_api.handle_fight_processor(user_action=user_action, user_id=user_id)
+    message_text = ""
+    message_text += f"<b>You got {data[0]} HP {f"({"+" if data[2][0] > 0 else "-"}{abs(data[2][0])})" if data[2][0] != 0 else ""}</b>\n"
+    message_text += f"<b>The monster got {data[1]} HP {f"({"+" if data[2][1] > 0 else "-"}{abs(data[2][1])})" if data[2][1] != 0 else ""}</b>\n"
+    if data[len(data) - 1] == 1:
+        message_text += "\n<b>Choose an action.</b>"
+        markup = types.InlineKeyboardMarkup()
+        markup.row(
+            types.InlineKeyboardButton(text="Pass.", callback_data=f"fight:pass.user:{user_id}"),
+            types.InlineKeyboardButton(text="Punch.", callback_data=f"fight:punch.user:{user_id}"),
+        )
+    if markup is not None:
+        bot.send_message(message.chat.id, message_text, reply_markup=markup, parse_mode="html")
+    else:
+        bot.send_message(message.chat.id, message_text, parse_mode="html")
+    if data[len(data) - 1] == 2:
+        process_fight(message=message, user_id=user_id)
+    if data[0] <= 0:
+        bot.send_message(message.chat.id, "You lost the fight!")
+        remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
+        remove(f"{data_api.dirs["save files"]}/save_{user_id}.json")
+        start_command_handler(message=message)
+    if data[1] <= 0:
+        bot.send_message(message.chat.id, "You won the fight!")
+        remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
+        data_api.grant_player(user_id=user_id)
+        process_game(message=message, user_id=user_id)
 
 
 @bot.message_handler(content_types=["text"])
 def on_command_error(message: telebot.types.Message):
     if message.text.startswith("/"):
-        bot.send_message(message.chat.id, "Unknown command.", parse_mode="html")
+        bot.send_message(message.chat.id, f"Unknown command: <b>{message.text}</b>.\nUse <b>/start</b> to start the game.", parse_mode="html")

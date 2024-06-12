@@ -160,4 +160,4 @@ def draw_small(grid, n, m, user_id):
                 for k_ in range(10):
                     rgb_color = color_map.get(grid[i][j], (0, 0, 0))
                     pixels[10*i+l_, 10*j+k_] = rgb_color
-    img.save(f'maze_game/data/temp_maze_files/temp_maze_{user_id}.png')
+    img.save(f'maze_game/data/temp_files/temp_maze_{user_id}.png')

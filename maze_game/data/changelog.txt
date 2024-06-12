@@ -17,7 +17,7 @@ v0.0.7b - v0.0.9b
 - Removed spells menu
 - Changed the way game description is shown
 - Added new items
-- Added use item button to inventory
+- Added `Use item.` button to inventory
 - Added abilities
 - Fully implemented breaking walls ability
 - Changed the way data is saved (SQL --> JSON)
@@ -30,3 +30,7 @@ v0.0.7b - v0.0.9b
 Release v0.1.0:
 - Removed UUID system
 - Remade saves system again (UUIDs --> Telegram IDs)
+- Added `Get back.` button to about message
+- Removed starting / loading button from about page
+- Changed the message for on_command_error handler
+- Implemented fight processor

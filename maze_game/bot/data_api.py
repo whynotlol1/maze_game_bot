@@ -1,4 +1,6 @@
+from maze_game.bot import fight_processor
 from maze_game.bot import maze_generator
+from random import choice
 from os import listdir
 from os import remove
 from os import mkdir
@@ -8,7 +10,7 @@ import json
 
 dirs = {
     "save files": "maze_game/data/saves",
-    "temp maze files": "maze_game/data/temp_maze_files",
+    "temp files": "maze_game/data/temp_files",
     "system files": "maze_game/data/system",
     "items": "maze_game/data/system/items.json"
 }
@@ -35,7 +37,7 @@ def start_api():
 
 def check_if_user_has_save_file(*, user_id: int) -> bool:
     global dirs
-    return user_id in listdir(dirs["save files"])
+    return f"save_{user_id}.json" in listdir(dirs["save files"])
 
 
 def create_new_game(*, user_id: int):
@@ -103,6 +105,7 @@ def player_movement(*, user_id: int, direction: str) -> str:
                     coords = [coords[0], coords[1]-2]
                     return_value = "OK"
                 elif grid[coords[0]][coords[1]-1] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    grid[coords[0]][coords[1] - 1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]-1]
                     return_value = "FIGHT"
             case "down":
@@ -115,6 +118,7 @@ def player_movement(*, user_id: int, direction: str) -> str:
                     coords = [coords[0], coords[1]+2]
                     return_value = "OK"
                 elif grid[coords[0]][coords[1]+1] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    grid[coords[0]][coords[1] + 1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]+1]
                     return_value = "FIGHT"
             case "right":
@@ -127,6 +131,7 @@ def player_movement(*, user_id: int, direction: str) -> str:
                     coords = [coords[0]+2, coords[1]]
                     return_value = "OK"
                 elif grid[coords[0]+1][coords[1]] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    grid[coords[0] + 1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]+1, coords[1]]
                     return_value = "FIGHT"
             case "left":
@@ -139,6 +144,7 @@ def player_movement(*, user_id: int, direction: str) -> str:
                     coords = [coords[0]-2, coords[1]]
                     return_value = "OK"
                 elif grid[coords[0]-1][coords[1]] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    grid[coords[0] - 1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]-1, coords[1]]
                     return_value = "FIGHT"
         save_data["maze grid"] = grid
@@ -223,3 +229,51 @@ def get_ability(*, user_id: int):
     with open(f"{dirs["save files"]}/save_{user_id}.json", "r") as save_file:
         save_data = json.loads(save_file.read())
         return save_data["player"]["ability"]["active"]
+
+
+def handle_fight_processor(user_action: str = "None", *, user_id: int) -> list:
+    global dirs
+    if path.isfile(f"{dirs["temp files"]}/fight_save_{user_id}.json"):
+        with open(f"{dirs["temp files"]}/fight_save_{user_id}.json", "r") as file:
+            data = json.loads(file.read())
+        match data["turn"]:
+            case 1:
+                data_returned = fight_processor.fight_processor(action=user_action, user_hp=data["user_hp"], monster_hp=data["monster_hp"], turn=1)
+                data["user_hp"] = data_returned[0]
+                data["monster_hp"] = data_returned[1]
+                data["turn"] = 2
+                with open(f"{dirs["temp files"]}/fight_save_{user_id}.json", "w") as file:
+                    file.write(json.dumps(data))
+                data_returned.append(data["turn"])
+                return data_returned
+            case 2:
+                data_returned = fight_processor.fight_processor(user_hp=data["user_hp"], monster_hp=data["monster_hp"], turn=2)
+                data["user_hp"] = data_returned[0]
+                data["monster_hp"] = data_returned[1]
+                data["turn"] = 1
+                with open(f"{dirs["temp files"]}/fight_save_{user_id}.json", "w") as file:
+                    file.write(json.dumps(data))
+                data_returned.append(data["turn"])
+                return data_returned
+    else:
+        with open(f"{dirs["temp files"]}/fight_save_{user_id}.json", "w") as file:
+            data = {
+                "user_hp": 20,
+                "monster_hp": 30,
+                "turn": 1
+            }
+            file.write(json.dumps(data))
+        return [20, 20, [0, 0], 1]
+
+
+def grant_player(*, user_id: int):
+    item = choice([1,2])
+    count = 0
+    with open(f"{dirs["save files"]}/save_{user_id}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+    for i in range(len(save_data["player"]["inventory"]["list"])):
+        if save_data["player"]["inventory"]["list"][i] == 0 and count == 0:
+            save_data["player"]["inventory"]["list"][i] = item
+            count += 1
+    with open(f"{dirs["save files"]}/save_{user_id}.json", "w") as save_file:
+        save_file.write(json.dumps(save_data))
