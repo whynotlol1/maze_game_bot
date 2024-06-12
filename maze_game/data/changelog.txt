@@ -1,15 +1,13 @@
 DEV updates:
-v0.0.1b - v0.0.3b
+v0.0.1b - v0.0.9b
 - Added /start command
 - Copied maze generation algorithm from https://github.com/xsafter/map-generator
 - Implemented player & exit generation
-v0.0.4b - v0.0.6b
 - Implemented interface
 - Implemented movement
 - Remade saves system: user cannot have several saves
 - Old maze pictures are getting deleted after player presses a button
 - Implemented settings menu
-v0.0.7b - v0.0.9b
 - Implemented game save file deletion
 - Changed the commit messages
 - Removed unneeded secret key check from data API
@@ -34,3 +32,4 @@ Release v0.1.0:
 - Removed starting / loading button from about page
 - Changed the message for on_command_error handler
 - Implemented fight processor
+Post-release updates:
