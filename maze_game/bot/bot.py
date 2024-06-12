@@ -221,8 +221,6 @@ def process_fight(user_action: str = "None", *, message: telebot.types.Message, 
         bot.send_message(message.chat.id, message_text, reply_markup=markup, parse_mode="html")
     else:
         bot.send_message(message.chat.id, message_text, parse_mode="html")
-    if data[len(data) - 1] == 2:
-        process_fight(message=message, user_id=user_id)
     if data[0] <= 0:
         bot.send_message(message.chat.id, "You lost the fight!")
         remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
@@ -233,6 +231,9 @@ def process_fight(user_action: str = "None", *, message: telebot.types.Message, 
         remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
         data_api.grant_player(user_id=user_id)
         process_game(message=message, user_id=user_id)
+    if data[0] > 0 and data[1] > 0:
+        if data[len(data) - 1] == 2:
+            process_fight(message=message, user_id=user_id)
 
 
 @bot.message_handler(content_types=["text"])
