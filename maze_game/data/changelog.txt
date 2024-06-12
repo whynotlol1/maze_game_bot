@@ -3,27 +3,23 @@ v0.0.1b - v0.0.3b
 - Added /start command
 - Copied maze generation algorithm from https://github.com/xsafter/map-generator
 - Implemented player & exit generation
-v0.0.4b
+v0.0.4b - v0.0.6b
 - Implemented interface
-v0.0.5b
 - Implemented movement
 - Remade saves system: user cannot have several saves
-v0.0.6b
 - Old maze pictures are getting deleted after player presses a button
 - Implemented settings menu
-v0.0.7b
+v0.0.7b - v0.0.9b
 - Implemented game save file deletion
 - Changed the commit messages
 - Removed unneeded secret key check from data API
 - Implemented inventory (items will be implemented in v0.0.8b)
 - Removed spells menu
 - Changed the way game description is shown
-v0.0.8b
 - Added new items
 - Added use item button to inventory
 - Added abilities
 - Fully implemented breaking walls ability
-v0.0.9b
 - Changed the way data is saved (SQL --> JSON)
 - Mazes are now 100x100 (used to be 300x300)
 - Implemented monsters generation
