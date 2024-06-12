@@ -7,7 +7,6 @@ from telebot import types
 from time import sleep
 from os import remove
 from os import getenv
-import telebot
 
 load_dotenv()
 
@@ -15,7 +14,7 @@ bot = TeleBot(token=b64decode(long_to_bytes(int(getenv("bottoken")))).decode())
 
 
 @bot.callback_query_handler(lambda call: call.data.startswith("action"))
-def callback_query_handler(call: telebot.types.CallbackQuery):
+def callback_query_handler(call: types.CallbackQuery):
     match call.data.replace(":", ".").split(".")[1]:
         case "start":
             data_api.create_new_game(user_id=int(call.data.split(":")[2]))
@@ -41,7 +40,7 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
 
 
 @bot.message_handler(commands=["start"])
-def start_command_handler(message: telebot.types.Message):
+def start_command_handler(message: types.Message):
     markup = types.InlineKeyboardMarkup()
     if data_api.check_if_user_has_save_file(user_id=message.from_user.id):
         markup.add(
@@ -59,7 +58,7 @@ def start_command_handler(message: telebot.types.Message):
 
 
 @bot.callback_query_handler(lambda call: call.data.startswith("game"))
-def callback_query_handler(call: telebot.types.CallbackQuery):
+def callback_query_handler(call: types.CallbackQuery):
     def private_send_inventory():
         message_text = "<i>Inventory menu.</i>\n"
         inventory = data_api.get_inventory(user_id=int(call.data.split(":")[2]))
@@ -176,7 +175,7 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             bot.send_message(call.message.chat.id, f"<i>Good bye, ranger!</i>\n<b>Game save file deleted successfully.</b>", reply_markup=markup, parse_mode="html")
 
 
-def process_game(*, message: telebot.types.Message, user_id: int):
+def process_game(*, message: types.Message, user_id: int):
     data_api.process_ability(user_id=user_id)
     markup = types.InlineKeyboardMarkup()
     markup.row(
@@ -196,12 +195,12 @@ def process_game(*, message: telebot.types.Message, user_id: int):
 
 
 @bot.callback_query_handler(lambda call: call.data.startswith("fight"))
-def callback_query_handler(call: telebot.types.CallbackQuery):
+def callback_query_handler(call: types.CallbackQuery):
     bot.edit_message_text(call.message.text, call.message.chat.id, call.message.id)
     process_fight(user_action=call.data.replace(":", ".").split(".")[1], message=call.message, user_id=int(call.data.replace(":", ".").split(".")[3]))
 
 
-def process_fight(user_action: str = "None", *, message: telebot.types.Message, user_id: int):
+def process_fight(user_action: str = "None", *, message: types.Message, user_id: int):
     markup = None
     if user_action == "None":
         data = data_api.handle_fight_processor(user_id=user_id)
@@ -240,6 +239,6 @@ def process_fight(user_action: str = "None", *, message: telebot.types.Message, 
 
 
 @bot.message_handler(content_types=["text"])
-def on_command_error(message: telebot.types.Message):
+def on_command_error(message: types.Message):
     if message.text.startswith("/"):
         bot.send_message(message.chat.id, f"Unknown command: <b>{message.text}</b>.\nUse <b>/start</b> to start the game.", parse_mode="html")
