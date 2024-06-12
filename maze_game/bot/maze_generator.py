@@ -109,7 +109,10 @@ def generate(*, width: int, height: int, iterations: int, uuid: str):
         values = []
         for i in range(-1, 2):
             for j in range(-1, 2):
-                values.append(grid[coords[0]+i][coords[1]+j] == 0)
+                try:
+                    values.append(grid[coords[0]+i][coords[1]+j] == 0)
+                except IndexError:
+                    pass
         return False not in values
 
     match exit_side:
@@ -143,6 +146,17 @@ def generate(*, width: int, height: int, iterations: int, uuid: str):
                 player_coords = [random.randint(0, len(grid[0]) - 1), random.randint(0, len(grid) // 2)]
 
     grid[player_coords[0]][player_coords[1]] = 3
+
+    coords_list = []
+    while len(coords_list) != random.randint(30, 40):
+        coords = [0, 0]
+        while not check_for_player_stuck(coords):
+            coords = [random.randint(0, len(grid[0])-1), random.randint(0, len(grid)-1)]
+        if coords not in coords_list and coords != player_coords:
+            coords_list.append(coords)
+
+    for coords in coords_list:
+        grid[coords[0]][coords[1]] = 4
 
     print_grid(grid, width, height, uuid)
 

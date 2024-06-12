@@ -72,7 +72,7 @@ def create_new_game(*, user_id: int):
             "level": 0,
             "health": 20,
             "inventory": {
-                "list": [0, 0, 0, 0, 0],
+                "list": [1, 0, 0, 0, 0],
                 "active slot": 0
             },
             "ability": {
@@ -131,7 +131,7 @@ def get_small_maze(uuid: str):
     maze_generator.draw_small(grid=surrounding, n=len(surrounding), m=len(surrounding[0]), uuid=uuid)
 
 
-def player_movement(*, user_id: int, direction: str):
+def player_movement(*, user_id: int, direction: str) -> str:
     global dirs
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
         save_data = json.loads(save_file.read())
@@ -139,25 +139,42 @@ def player_movement(*, user_id: int, direction: str):
         coords = save_data["player"]["global maze position"]
         match direction:
             case "up":
-                if grid[coords[0]][coords[1]-1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
+                if grid[coords[0]][coords[1]-1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]][coords[1]-1] in [0, 1]) or (grid[coords[0]][coords[1]-1] == 4 and get_ability(user_id=user_id) == "invisibility"):
                     grid[coords[0]][coords[1]-1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]-1]
+                    return_value = "OK"
+                elif grid[coords[0]][coords[1]-1] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    coords = [coords[0], coords[1]-1]
+                    return_value = "FIGHT"
             case "down":
-                if grid[coords[0]][coords[1]+1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
+                if grid[coords[0]][coords[1]+1] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]][coords[1]+1] in [0, 1]) or (grid[coords[0]][coords[1]+1] == 4 and get_ability(user_id=user_id) == "invisibility"):
                     grid[coords[0]][coords[1]+1], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0], coords[1]+1]
+                    return_value = "OK"
+                elif grid[coords[0]][coords[1]+1] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    coords = [coords[0], coords[1]+1]
+                    return_value = "FIGHT"
             case "right":
-                if grid[coords[0]+1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
+                if grid[coords[0]+1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]) or (grid[coords[0]+1][coords[1]] == 4 and get_ability(user_id=user_id) == "invisibility"):
                     grid[coords[0]+1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]+1, coords[1]]
+                    return_value = "OK"
+                elif grid[coords[0]+1][coords[1]] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    coords = [coords[0]+1, coords[1]]
+                    return_value = "FIGHT"
             case "left":
-                if grid[coords[0]-1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]+1][coords[1]] in [0, 1]):
+                if grid[coords[0]-1][coords[1]] == 0 or (get_ability(user_id=user_id) == "break walls" and grid[coords[0]-1][coords[1]] in [0, 1]) or (grid[coords[0]-1][coords[1]] == 4 and get_ability(user_id=user_id) == "invisibility"):
                     grid[coords[0]-1][coords[1]], grid[coords[0]][coords[1]] = grid[coords[0]][coords[1]], 0
                     coords = [coords[0]-1, coords[1]]
+                    return_value = "OK"
+                elif grid[coords[0]-1][coords[1]] == 4 and get_ability(user_id=user_id) != "invisibility":
+                    coords = [coords[0]-1, coords[1]]
+                    return_value = "FIGHT"
         save_data["maze grid"] = grid
         save_data["player"]["global maze position"] = coords
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
         save_file.write(json.dumps(save_data))
+    return return_value
 
 
 def delete_save(*, user_id: int):
@@ -197,6 +214,12 @@ def get_item(*, item_id: int) -> str:
     return data[str(item_id)]
 
 
+def get_active_slot(*, user_id: int):
+    with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
+        save_data = json.loads(save_file.read())
+        return save_data["player"]["inventory"]["active slot"]
+
+
 def get_user_slot(*, user_id: int) -> int:
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
         save_data = json.loads(save_file.read())
@@ -208,10 +231,10 @@ def use_item(*, user_id: int):
     slot = get_user_slot(user_id=user_id)
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "r") as save_file:
         save_data = json.loads(save_file.read())
-        save_data["player"]["inventory"]["list"][slot] = 0
+        save_data["player"]["inventory"]["list"][get_active_slot(user_id=user_id)] = 0
         save_data["player"]["ability"] = {
-            "active": item_abilities[get_inventory(user_id=user_id)[slot][0]][0],
-            "timer": item_abilities[get_inventory(user_id=user_id)[slot][0]][1],
+            "active": item_abilities[int(slot)][0],
+            "timer": item_abilities[int(slot)][1],
         }
     with open(f"{dirs["save files"]}/save_{get_uuid(user_id=user_id)}.json", "w") as save_file:
         save_file.write(json.dumps(save_data))

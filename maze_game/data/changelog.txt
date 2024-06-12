@@ -26,3 +26,5 @@ v0.0.8b
 v0.0.9b
 - Changed the way data is saved (SQL --> JSON)
 - Mazes are now 100x100 (used to be 300x300)
+- Implemented monsters generation
+- Implemented moving to monsters

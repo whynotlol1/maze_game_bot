@@ -85,21 +85,37 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
 
     match call.data.replace(":", ".").split(".")[1]:
         case "move_up":
-            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="up")
+            check = data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="up")
             bot.delete_message(call.message.chat.id, call.message.id)
-            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+            match check:
+                case "OK":
+                    process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+                case "FIGHT":
+                    pass  # TODO
         case "move_left":
-            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="left")
+            check = data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="left")
             bot.delete_message(call.message.chat.id, call.message.id)
-            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+            match check:
+                case "OK":
+                    process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+                case "FIGHT":
+                    pass  # TODO
         case "move_down":
-            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="down")
+            check = data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="down")
             bot.delete_message(call.message.chat.id, call.message.id)
-            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+            match check:
+                case "OK":
+                    process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+                case "FIGHT":
+                    pass  # TODO
         case "move_right":
-            data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="right")
+            check = data_api.player_movement(user_id=int(call.data.split(":")[2]), direction="right")
             bot.delete_message(call.message.chat.id, call.message.id)
-            process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+            match check:
+                case "OK":
+                    process_game(message=call.message, user_id=int(call.data.split(":")[2]))
+                case "FIGHT":
+                    pass  # TODO
         case "inventory_menu":
             private_send_inventory()
         case "inventory":
@@ -112,7 +128,7 @@ def callback_query_handler(call: telebot.types.CallbackQuery):
             elif data[2].startswith("use_slot"):
                 user_id = int(data[4])
                 if data_api.get_user_slot(user_id=user_id) != 0:
-                    msg = bot.send_message(call.message.chat.id, f"Used item: {data_api.get_item(item_id=data_api.get_inventory(user_id=user_id)[data_api.get_user_slot(user_id=user_id)][0])[0]}")
+                    msg = bot.send_message(call.message.chat.id, f"Used item: {data_api.get_item(item_id=data_api.get_user_slot(user_id=user_id))[0]}")
                     data_api.use_item(user_id=user_id)
                     sleep(1)
                     bot.delete_message(call.message.chat.id, msg.id)
