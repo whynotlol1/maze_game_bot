@@ -259,7 +259,7 @@ def handle_fight_processor(user_action: str = "None", *, user_id: int) -> list:
         with open(f"{dirs["temp files"]}/fight_save_{user_id}.json", "w") as file:
             data = {
                 "user_hp": 20,
-                "monster_hp": 30,
+                "monster_hp": 20,
                 "turn": 1
             }
             file.write(json.dumps(data))
