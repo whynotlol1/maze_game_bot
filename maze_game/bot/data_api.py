@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from random import choice
 from os import listdir
 from os import remove
-from os import getenv
 from os import mkdir
 from os import path
 import json
