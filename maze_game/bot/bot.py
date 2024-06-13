@@ -243,7 +243,6 @@ def process_console(message: types.Message, user_id: int, message_to_delete: typ
     commands = {
         "quit": "Quit console mode.",
         "help": "See this message.",
-        "changelog": "See the changelog for the latest version.",
         "give": "Requires cheats on."
     }
     secret_commands = ["sv_cheats", "meow"]
@@ -260,11 +259,6 @@ def process_console(message: types.Message, user_id: int, message_to_delete: typ
                     for el in commands.keys():
                         message_text += f"<b>{el}</b> | <i>{commands[el]}</i>\n"
                     msg = bot.send_message(message.chat.id, message_text, parse_mode="html")
-                    if message_to_delete2 is not None:
-                        bot.delete_message(message_to_delete2.chat.id, message_to_delete2.id)
-                    bot.register_next_step_handler(msg, process_console, user_id, message_to_delete, msg)
-                case "changelog":
-                    msg = bot.send_message(message.chat.id, f"Changelog for <b>{getenv("version")}</b>:{data_api.get_changelog()}", parse_mode="html")
                     if message_to_delete2 is not None:
                         bot.delete_message(message_to_delete2.chat.id, message_to_delete2.id)
                     bot.register_next_step_handler(msg, process_console, user_id, message_to_delete, msg)
