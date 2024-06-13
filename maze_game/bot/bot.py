@@ -406,7 +406,7 @@ def callback_query_handler(call: types.CallbackQuery):
     process_fight(user_action=call.data.replace(":", ".").split(".")[1], message=call.message, user_id=int(call.data.replace(":", ".").split(".")[3]))
 
 
-def process_fight(user_action: str = None, *, message: types.Message, user_id: int):
+def process_fight(user_action: str = None, *, message: types.Message, user_id: int): # TODO debug
     """
     Frontend of a fight processor.
     """
