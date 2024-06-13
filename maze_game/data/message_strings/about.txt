@@ -1,5 +1,0 @@
-<i>Here is the short description of the game:</i>
-
-You are trapped inside a unique randomly generated maze. To win the game, you have to find an exit.
-However, you are not alone in the maze. On your way out you may or may not encounter <i>The Maze Monsters</i>.
-By fighting the monsters, you can get valuable loot.
