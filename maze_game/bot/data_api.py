@@ -322,10 +322,3 @@ def get_sv_cheats(*, user_id: int):
     with open(f"{dirs["save files"]}/save_{user_id}.json", "r") as save_file:
         save_data = json.loads(save_file.read())
         return save_data["sv cheats"]
-
-
-def get_changelog():
-    version = getenv("version")
-    with open("maze_game/data/changelog.txt", "r") as changelog_file:
-        changelog = changelog_file.read().split(version)[1]
-    return changelog
