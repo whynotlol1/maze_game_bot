@@ -1,3 +1,7 @@
+"""
+This file is used for token encryption.
+"""
+
 from Crypto.Util.number import bytes_to_long
 from base64 import b64encode
 
