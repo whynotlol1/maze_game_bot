@@ -429,21 +429,22 @@ def process_fight(user_action: str = None, *, message: types.Message, user_id: i
         message_text += "\n<b>Monster is choosing an action.</b>"  # Or a beautiful message
     # Sending the info
     if markup is not None:
-        bot.send_message(message.chat.id, message_text, reply_markup=markup, parse_mode="html")
+        msg_ = bot.send_message(message.chat.id, message_text, reply_markup=markup, parse_mode="html")
     else:
-        msg = bot.send_message(message.chat.id, message_text, parse_mode="html")
+        msg_ = bot.send_message(message.chat.id, message_text, parse_mode="html")
         sleep(1.5)
-        bot.delete_message(msg.chat.id, msg.id)
+        bot.delete_message(msg_.chat.id, msg_.id)
     if data[0] <= 0:  # If user loses the fight
+        if msg_ is not None:
+            bot.delete_message(msg_.chat.id, msg_.id)
         remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
         remove(f"{data_api.dirs["save files"]}/save_{user_id}.json")  # Delete the game
         markup = types.InlineKeyboardMarkup()
         markup.add(
             types.InlineKeyboardButton(text="Start new game!", callback_data=f"action:start.user:{user_id}")
         )
-        msg = bot.send_message(message.chat.id, "You lost the fight!", reply_markup=markup)
+        bot.send_message(message.chat.id, "You lost the fight!", reply_markup=markup)
         sleep(0.5)
-        bot.delete_message(msg.chat.id, msg.id)
     if data[1] <= 0:  # If user wins the fight
         msg = bot.send_message(message.chat.id, "You won the fight!")
         remove(f"{data_api.dirs["temp files"]}/fight_save_{user_id}.json")
