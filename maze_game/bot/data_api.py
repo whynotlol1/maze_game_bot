@@ -7,7 +7,6 @@ from maze_game.bot import maze_generator
 from dotenv import load_dotenv
 from random import choice
 from os import listdir
-from os import remove
 from os import mkdir
 from os import path
 import json
@@ -83,16 +82,6 @@ def new_save(*, user_id: int):
     }
     with open(f"{dirs["save files"]}/save_{user_id}.json", "w") as save_file:
         save_file.write(json.dumps(save_json))
-
-
-def delete_save(*, user_id: int):
-    """
-    Deletes the save file.
-
-    :param user_id: User Telegram ID
-    """
-    global dirs
-    remove(f"{dirs["save files"]}/save_{user_id}.json")
 
 
 def get_small_maze(*, user_id: int):
