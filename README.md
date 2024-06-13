@@ -16,7 +16,7 @@ This is the official repository of The Maze Game Telegram bot.
 ## Setup
 
 1. Clone the repository
-2. Use `PyCryptoDome and base64` Python packages to encrypt your Telegram bot token: `bytes_to_long(b64encode(%token%.encode()))` and paste the encrypted token to `maze_game/bot/.env`
+2. Run `python3 maze_game/token_encrypter.py` to encrypt your Telegram bot token and paste the encrypted token to `maze_game/bot/.env`
 3. Start the bot with `python3 maze_game/run.py`
 
 ## Credits
