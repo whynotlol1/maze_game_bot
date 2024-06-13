@@ -18,7 +18,7 @@ bot = TeleBot(token=b64decode(long_to_bytes(int(getenv("bottoken")))).decode())
 def callback_query_handler(call: types.CallbackQuery):
     match call.data.replace(":", ".").split(".")[1]:
         case "start":
-            data_api.create_new_game(user_id=int(call.data.split(":")[2]))
+            data_api.new_save(user_id=int(call.data.split(":")[2]))
             bot.edit_message_text(f"Welcome to <i>The Maze</i>!", call.message.chat.id, call.message.id, parse_mode="html")
             sleep(1)
             bot.delete_message(call.message.chat.id, call.message.id)
@@ -43,7 +43,7 @@ def callback_query_handler(call: types.CallbackQuery):
 @bot.message_handler(commands=["start"])
 def start_command_handler(message: types.Message):
     markup = types.InlineKeyboardMarkup()
-    if data_api.check_if_user_has_save_file(user_id=message.from_user.id):
+    if data_api.user_has_save(user_id=message.from_user.id):
         markup.add(
             types.InlineKeyboardButton(text="Load saved game!", callback_data=f"action:load.user:{message.from_user.id}")
         )

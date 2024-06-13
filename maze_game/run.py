@@ -1,3 +1,7 @@
+"""
+This file is only used to start the bot.
+"""
+
 from requests import exceptions
 from datetime import datetime
 from bot import data_api

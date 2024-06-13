@@ -1,3 +1,8 @@
+"""
+Unique fight processor.
+Used with one of the functions in bot.py this is the only fight processor suitable for Telegram bots I know.
+"""
+
 # (c) cat dev 2024
 
 import random
@@ -7,15 +12,22 @@ def fight_processor(action: str = None, *, user_hp: int, monster_hp: int, turn: 
     """
     User-Monster fight processor for The Maze Game Telegram bot.
 
-    :param str action: User action if turn == 1
+    :param str action: User action if turn == 1.
     :param int user_hp: User HP got from the save file.
     :param int monster_hp: Monster HP. Default value is 40.
-    :param int turn: [1/2] 1 - User's turn, 2 - Monster's turn
+    :param int turn: [1/2] 1 - User's turn, 2 - Monster's turn.
     :return: list [new_user_hp, new_monster_hp, deltas[], <monster_action> if turn  == 2 else <>]
     :rtype: list
     """
 
     def private_gen_monster_action():
+        """
+        This function generates a Monster action based on 3 random values: __a, __b and __c.
+        Average chances: ~70% punch, ~30% pass.
+
+        :return: Monster action.
+        :rtype: str
+        """
         __a = random.random()
         __b = random.random()
         __c = random.random()
@@ -39,6 +51,7 @@ def fight_processor(action: str = None, *, user_hp: int, monster_hp: int, turn: 
         return monster_action  # ~70% punch, ~30% pass
 
     deltas = [0, 0]
+    # Calculating HP deltas
     match turn:
         case 1:
             match action:
@@ -53,7 +66,7 @@ def fight_processor(action: str = None, *, user_hp: int, monster_hp: int, turn: 
                     deltas = [-random.randint(1, 5), 0]
                 case "pass":
                     deltas = [0, random.randint(1, 3)]
-
+    # Applying HP deltas
     if user_hp + deltas[0] <= 20:
         new_user_hp = user_hp + deltas[0]
     else:

@@ -1,3 +1,7 @@
+"""
+This file is used for maze map generation and drawing small portions of the maze.
+"""
+
 # Credit: @xsafter
 
 from collections import deque
@@ -5,6 +9,7 @@ from PIL import Image
 import random
 
 
+# Code below written by @xsafter
 def make_grid(width, height):
     newgrid = [[0 for _ in range(height)] for _ in range(width)]
     for i in range(len(newgrid)):
@@ -69,9 +74,11 @@ def flood_find_empty(grid, tries, goal):
         percentage = open_count * 100 / (len(grid) * len(grid[0]))
 
     return new_grid, percentage
+# Code above written by xsafter
 
 
 def generate(*, width: int, height: int, iterations: int):
+    # 80% of the function code written by @xsafter
     chance = 40
     count = 5
     flood_tries = 5
@@ -88,6 +95,7 @@ def generate(*, width: int, height: int, iterations: int):
     exit_side = random.randint(1, 4)
     player_coords = [0, 0]
 
+    # code below added by @whynotlol1
     def check_for_valid_pos(coords: list) -> bool:
         values = []
         for i in range(-1, 2):
@@ -144,6 +152,7 @@ def generate(*, width: int, height: int, iterations: int):
     return player_coords, grid
 
 
+# Function written by Phind AI model
 def draw_small(grid, n, m, user_id):
     color_map = {
         0: (0, 0, 0),  # Black
